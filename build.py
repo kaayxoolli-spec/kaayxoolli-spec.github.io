@@ -26,7 +26,7 @@ def setting(name, default=""):
     return (os.environ.get(name) or CONFIG.get(name) or default).strip()
 
 
-SITE_URL = setting("SITE_URL", "https://kaayxool.github.io").rstrip("/")
+SITE_URL = setting("SITE_URL", "https://kaayxoolli-spec.github.io").rstrip("/")
 SHEET_CSV_URL = setting("SHEET_CSV_URL")
 GOOGLE_VERIFICATION = setting("GOOGLE_VERIFICATION")
 BING_VERIFICATION = setting("BING_VERIFICATION")
