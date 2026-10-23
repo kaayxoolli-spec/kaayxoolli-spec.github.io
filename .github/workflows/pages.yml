@@ -17,18 +17,27 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+env:
+  SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io', github.repository_owner) }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Construire le site
-        env:
-          SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io', github.repository_owner) }}
         run: python build.py
+      - name: Comparer avec le site en ligne
+        id: diff
+        run: |
+          curl -fsL "$SITE_URL/sitemap.xml" | grep -o '<loc>[^<]*</loc>' > old.txt || true
+          grep -o '<loc>[^<]*</loc>' _site/sitemap.xml > new.txt
+          if cmp -s old.txt new.txt && [ "${{ github.event_name }}" = "schedule" ]; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -43,3 +52,20 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  signaler:
+    # Prévient Bing, Yahoo, DuckDuckGo, Yandex… (IndexNow) quand des pages changent
+    needs: [build, deploy]
+    if: needs.build.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Envoyer les adresses à IndexNow
+        run: |
+          sleep 30
+          key=$(python3 -c "import json;print(json.load(open('config.json')).get('INDEXNOW_KEY',''))")
+          [ -n "$key" ] || exit 0
+          host=${SITE_URL#https://}
+          urls=$(curl -fsL "$SITE_URL/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | sed 's#</\?loc>##g' | python3 -c "import sys,json;print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))")
+          body="{\"host\":\"$host\",\"key\":\"$key\",\"keyLocation\":\"$SITE_URL/$key.txt\",\"urlList\":$urls}"
+          curl -sS -o /dev/null -w "IndexNow : %{http_code}\n" -H "Content-Type: application/json; charset=utf-8" -d "$body" https://api.indexnow.org/indexnow

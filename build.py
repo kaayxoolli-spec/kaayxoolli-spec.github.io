@@ -30,6 +30,7 @@ SITE_URL = setting("SITE_URL", "https://kaayxoolli-spec.github.io").rstrip("/")
 SHEET_CSV_URL = setting("SHEET_CSV_URL")
 GOOGLE_VERIFICATION = setting("GOOGLE_VERIFICATION")
 BING_VERIFICATION = setting("BING_VERIFICATION")
+INDEXNOW_KEY = setting("INDEXNOW_KEY")
 
 INSTAGRAM = "kaayxoolli"
 EMAIL = "kaayxoolli@gmail.com"
@@ -355,6 +356,8 @@ def main():
                                      + "\n".join(urls) + "\n</urlset>\n", encoding="utf-8")
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n", encoding="utf-8")
     (OUT / ".nojekyll").write_text("")
+    if INDEXNOW_KEY:
+        (OUT / f"{INDEXNOW_KEY}.txt").write_text(INDEXNOW_KEY, encoding="utf-8")
     print(f"{len(rows)} annonce(s) -> {OUT}")
 
 
