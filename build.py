@@ -122,7 +122,11 @@ def head(title, desc, path, extra=""):
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{e(url)}">
-<meta property="og:image" content="{SITE_URL}/assets/logo.png">
+<meta property="og:image" content="{SITE_URL}/assets/affiche.jpg">
+<meta property="og:image:width" content="1080">
+<meta property="og:image:height" content="1440">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{SITE_URL}/assets/affiche.jpg">
 <meta property="og:locale" content="fr_SN">
 <meta name="theme-color" content="#13124A">
 <link rel="icon" href="{SITE_URL}/assets/logo.png">
@@ -222,8 +226,8 @@ def index_page(rows):
       <a href="{SITE_URL}/"><img class="logo" src="{SITE_URL}/assets/logo.png" alt="Kaay Xool" width="520" height="332"></a>
       <a class="ig" href="https://www.instagram.com/{INSTAGRAM}/" rel="noopener">@{INSTAGRAM}</a>
     </div>
-    <h1>Objets perdus et trouvés au Sénégal. <em>Kaay xool</em>, viens voir.</h1>
-    <p>Le moteur de recherche des objets perdus et trouvés, des papiers, des animaux et des personnes recherchées, à Dakar et dans tout le Sénégal.</p>
+    <h1>Perdu ? Trouvé ? <em>Kaay xool</em>, viens voir.</h1>
+    <p>Kaay Xool vous aide à retrouver vos téléphones, papiers, clés, sacs et animaux, à Dakar et partout au Sénégal. <span class="free">100 % gratuit</span></p>
     <form class="search" id="search-form" role="search" action="{SITE_URL}/">
       <input id="q" name="q" type="search" placeholder="Téléphone, carte d'identité, Keur Massar…" aria-label="Rechercher une annonce" autocomplete="off">
       <button class="btn lime" type="submit">Chercher</button>
@@ -274,11 +278,13 @@ def index_page(rows):
 
   <section class="block" aria-labelledby="t-comment">
     <h2 id="t-comment">Comment ça marche</h2>
-    <div class="steps">
-      <div class="step"><b>1. Vous nous écrivez</b>Quoi, où, quand, et une photo si possible.</div>
-      <div class="step"><b>2. On publie</b>Votre annonce arrive ici et sur notre page Instagram.</div>
-      <div class="step"><b>3. On partage</b>Les abonnés partagent, l'annonce circule dans tout le quartier.</div>
-      <div class="step"><b>4. Vous retrouvez</b>On met en relation celui qui a perdu et celui qui a trouvé.</div>
+    <div class="how">
+      <div class="steps">
+        <div class="step"><b>1. Déclarez en 1 minute</b>Quoi, où, quand, et une photo si possible, par le formulaire ou en message privé sur Instagram.</div>
+        <div class="step"><b>2. On publie et on partage</b>Votre annonce arrive ici et sur notre page Instagram, puis circule dans tout le quartier.</div>
+        <div class="step"><b>3. Vous retrouvez</b>On met en relation celui qui a perdu et celui qui a trouvé. Votre numéro n'est jamais publié.</div>
+      </div>
+      <a class="poster" href="{SITE_URL}/assets/affiche.jpg"><img src="{SITE_URL}/assets/affiche.jpg" alt="Affiche Kaay Xool : Perdu ? Trouvé ? Kaay Xool vous aide à le retrouver, partout au Sénégal. 100 % gratuit. Déclarez en 1 minute, on publie et on partage, vous retrouvez. Votre numéro n'est jamais publié. Ne payez jamais pour récupérer un objet." width="1080" height="1440" loading="lazy"></a>
     </div>
   </section>
 
