@@ -51,10 +51,15 @@ def plain(s):
 
 
 def read_rows():
+    text = None
     if SHEET_CSV_URL:
-        with urllib.request.urlopen(SHEET_CSV_URL, timeout=30) as r:
-            text = r.read().decode("utf-8-sig")
-    else:
+        try:
+            with urllib.request.urlopen(SHEET_CSV_URL, timeout=30) as r:
+                text = r.read().decode("utf-8-sig")
+            print("Annonces lues depuis Google Sheets")
+        except Exception as err:
+            print(f"Google Sheets illisible ({err}), on garde data/annonces.csv")
+    if text is None:
         text = (ROOT / "data" / "annonces.csv").read_text(encoding="utf-8-sig")
     rows = []
     for raw in csv.DictReader(io.StringIO(text)):
