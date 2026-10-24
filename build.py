@@ -44,6 +44,19 @@ TYPES = {
     "recherche": ("Personnes recherchées", "RECHERCHÉ", "recherché"),
     "retrouve": ("Retrouvés", "RETROUVÉ", "retrouvé"),
 }
+LIEUX = {
+    "Dakar": "le Plateau, la Médina, Sandaga, Colobane, les Parcelles Assainies, Liberté, Yoff ou Ouakam",
+    "Pikine": "Thiaroye, le marché Zinc ou Icotaf",
+    "Guédiawaye": "Golf Sud, Sam Notaire ou Wakhinane",
+    "Keur Massar": "le marché de Keur Massar, Jaxaay ou Malika",
+    "Rufisque": "le marché de Rufisque, la gare ou Bargny",
+    "Thiès": "la gare routière, le marché Central ou Grand Thiès",
+    "Mbour": "Saly, la gare routière ou le marché de Mbour",
+    "Saint-Louis": "l'Île, Sor ou Guet Ndar",
+    "Touba": "les alentours de la Grande Mosquée ou le marché Ocass",
+    "Kaolack": "le marché central ou Médina Baye",
+    "Ziguinchor": "le port ou le marché Saint-Maur",
+}
 QUICK = ["Carte d'identité", "Téléphone", "Clés", "Passeport", "Chat", "Portefeuille"]
 
 
@@ -85,6 +98,16 @@ def read_rows():
     rows.sort(key=lambda r: r["date"], reverse=True)
     rows.sort(key=lambda r: r["type"] == "retrouve")
     return rows
+
+
+def slug(s):
+    return re.sub(r"[^a-z0-9]+", "-", plain(s)).strip("-")
+
+
+def city_links(current=None):
+    return "".join(
+        f'<a class="chip" href="{SITE_URL}/objets-perdus/{slug(v)}.html"{" aria-current=\"page\"" if v == current else ""}>{e(v)}</a>'
+        for v in VILLES if v != "Autre")
 
 
 def fdate(d):
@@ -288,6 +311,11 @@ def index_page(rows):
     </div>
   </section>
 
+  <section class="block" aria-labelledby="t-villes">
+    <h2 id="t-villes">Objets perdus par ville</h2>
+    <nav class="chips wraps" aria-label="Villes">{city_links()}</nav>
+  </section>
+
   <section class="block" aria-labelledby="t-securite">
     <h2 id="t-securite">Nos règles de sécurité</h2>
     <div class="panel">
@@ -343,20 +371,78 @@ def annonce_page(a):
 """ + FOOTER
 
 
+def city_page(ville, rows):
+    mine = [a for a in rows if plain(a["ville"]) == plain(ville)]
+    open_ = [a for a in mine if a["type"] != "retrouve"]
+    lieux = LIEUX.get(ville)
+    title = f"Objets perdus et trouvés à {ville} | Kaay Xool"
+    desc = (f"Téléphone, carte d'identité, clés ou animal perdu à {ville} ? Consultez les annonces d'objets perdus "
+            f"et trouvés à {ville} et déclarez gratuitement ce que vous avez perdu ou trouvé avec Kaay Xool.")
+    intro = (f"Vous avez perdu ou trouvé quelque chose à {ville}"
+             + (f", par exemple vers {lieux}" if lieux else "")
+             + " ? Kaay Xool publie votre annonce, la partage sur Instagram et met en relation celui qui a perdu "
+               "et celui qui a trouvé. C'est gratuit, et votre numéro n'est jamais publié.")
+    if mine:
+        listing = f'<p class="count">{len(open_)} annonce{"s" if len(open_) > 1 else ""} en cours à {e(ville)}</p><div class="grid">' + "\n".join(card(a) for a in mine) + "</div>"
+    else:
+        listing = (f'<div class="empty"><b>Aucune annonce à {e(ville)} pour le moment</b>'
+                   f'Vous avez perdu ou trouvé quelque chose à {e(ville)} ? Déclarez-le, on publie et on partage pour vous.'
+                   f'<a class="btn lime" href="{SITE_URL}/#declarer">Déclarer gratuitement</a></div>')
+    return head(title, desc, f"/objets-perdus/{slug(ville)}.html") + f"""<header class="hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <a href="{SITE_URL}/"><img class="logo" src="{SITE_URL}/assets/logo.png" alt="Kaay Xool" width="520" height="332"></a>
+      <a class="ig" href="https://www.instagram.com/{INSTAGRAM}/" rel="noopener">@{INSTAGRAM}</a>
+    </div>
+    <h1>Objets perdus et trouvés à <em>{e(ville)}</em></h1>
+    <p>{e(intro)}</p>
+    <form class="search" role="search" action="{SITE_URL}/">
+      <input name="q" type="search" placeholder="Rechercher partout au Sénégal…" aria-label="Rechercher une annonce" autocomplete="off">
+      <button class="btn lime" type="submit">Chercher</button>
+    </form>
+  </div>
+</header>
+<main class="wrap">
+  <p class="crumb"><a href="{SITE_URL}/">← Toutes les annonces du Sénégal</a></p>
+  <section aria-labelledby="t-ville">
+    <h2 id="t-ville">Annonces à {e(ville)}</h2>
+    {listing}
+  </section>
+  <section class="block" aria-labelledby="t-comment">
+    <h2 id="t-comment">Perdu quelque chose à {e(ville)} ?</h2>
+    <div class="steps">
+      <div class="step"><b>1. Déclarez en 1 minute</b>Quoi, où, quand, et une photo si possible, par le <a href="{SITE_URL}/#declarer">formulaire</a> ou en message privé sur Instagram <a href="https://ig.me/m/{INSTAGRAM}" rel="noopener">@{INSTAGRAM}</a>.</div>
+      <div class="step"><b>2. On publie et on partage</b>Votre annonce arrive sur Kaay Xool et sur notre Instagram, puis circule à {e(ville)}.</div>
+      <div class="step"><b>3. Vous retrouvez</b>On met en relation celui qui a perdu et celui qui a trouvé. Ne payez jamais pour récupérer un objet.</div>
+    </div>
+  </section>
+  <section class="block" aria-labelledby="t-villes">
+    <h2 id="t-villes">Autres villes</h2>
+    <nav class="chips wraps" aria-label="Villes">{city_links(ville)}</nav>
+  </section>
+</main>
+""" + FOOTER
+
+
 def main():
     rows = read_rows()
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "annonce").mkdir(parents=True)
+    (OUT / "objets-perdus").mkdir()
     shutil.copytree(ROOT / "assets", OUT / "assets")
     (OUT / "index.html").write_text(index_page(rows), encoding="utf-8")
     for a in rows:
         (OUT / "annonce" / f"{a['ref']}.html").write_text(annonce_page(a), encoding="utf-8")
+    villes = [v for v in VILLES if v != "Autre"]
+    for v in villes:
+        (OUT / "objets-perdus" / f"{slug(v)}.html").write_text(city_page(v, rows), encoding="utf-8")
     (OUT / "404.html").write_text(head("Page introuvable | Kaay Xool", "Cette page n'existe pas.", "/404.html")
                                   + f'<main class="wrap"><h1>Page introuvable</h1><p><a href="{SITE_URL}/">Retour aux annonces</a></p></main>' + FOOTER,
                                   encoding="utf-8")
     today = date.today().isoformat()
     urls = [f"  <url><loc>{SITE_URL}/</loc><lastmod>{today}</lastmod></url>"] + [
+        f"  <url><loc>{SITE_URL}/objets-perdus/{slug(v)}.html</loc></url>" for v in villes] + [
         f"  <url><loc>{SITE_URL}/annonce/{e(a['ref'])}.html</loc></url>" for a in rows]
     (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                      + "\n".join(urls) + "\n</urlset>\n", encoding="utf-8")
