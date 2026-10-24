@@ -70,6 +70,7 @@
       if (v("f-nom")) lines.push(`Prénom : ${v("f-nom")}`);
       $("out").textContent = lines.join("\n");
       $("copy").dataset.copy = lines.join("\n");
+      $("mail").href = "mailto:kaayxoolli@gmail.com?subject=" + encodeURIComponent(`Annonce Kaay Xool : ${v("f-type")} - ${v("f-quoi")}`) + "&body=" + encodeURIComponent(lines.join("\n"));
       $("result").hidden = false;
       $("result").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
     });

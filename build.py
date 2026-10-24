@@ -65,18 +65,18 @@ def plain(s):
 
 
 def read_rows():
-    text = None
+    # Les annonces gérées par Claude (data/annonces.csv) et celles du Google Sheets s'additionnent.
+    texts = [(ROOT / "data" / "annonces.csv").read_text(encoding="utf-8-sig")]
     if SHEET_CSV_URL:
         try:
             with urllib.request.urlopen(SHEET_CSV_URL, timeout=30) as r:
-                text = r.read().decode("utf-8-sig")
-            print("Annonces lues depuis Google Sheets")
+                texts.append(r.read().decode("utf-8-sig"))
+            print("Annonces lues aussi depuis Google Sheets")
         except Exception as err:
-            print(f"Google Sheets illisible ({err}), on garde data/annonces.csv")
-    if text is None:
-        text = (ROOT / "data" / "annonces.csv").read_text(encoding="utf-8-sig")
-    rows = []
-    for raw in csv.DictReader(io.StringIO(text)):
+            print(f"Google Sheets illisible ({err}), seulement data/annonces.csv")
+    rows, seen = [], set()
+    raws = [raw for text in texts for raw in csv.DictReader(io.StringIO(text))]
+    for raw in raws:
         row = {plain(k): (v or "").strip() for k, v in raw.items() if k}
         if not row.get("quoi"):
             continue
@@ -87,8 +87,12 @@ def read_rows():
         m = re.match(r"^(\d{1,2})/(\d{1,2})/(\d{4})$", d)
         if m:
             d = f"{m[3]}-{int(m[2]):02d}-{int(m[1]):02d}"
+        ref = row.get("ref", "").upper()
+        if ref and ref in seen:
+            continue
+        seen.add(ref)
         rows.append({
-            "ref": row.get("ref", "").upper(), "type": t, "cat": cat, "quoi": row["quoi"],
+            "ref": ref, "type": t, "cat": cat, "quoi": row["quoi"],
             "ou": row.get("ou", ""), "ville": row.get("ville", ""), "date": d,
             "desc": row.get("description", ""), "photo": row.get("photo", ""),
         })
@@ -292,9 +296,10 @@ def index_page(rows):
         <div class="out" id="out"></div>
         <div class="actions">
           <button class="btn lime" type="button" id="copy" data-copy="">Copier le message</button>
+          <a class="btn dark" id="mail" href="mailto:{EMAIL}">Envoyer par e-mail</a>
           <a class="btn" href="https://ig.me/m/{INSTAGRAM}" rel="noopener">Ouvrir Instagram @{INSTAGRAM}</a>
         </div>
-        <p class="hint">Copiez le message, puis collez-le dans nos messages privés Instagram, avec une photo si possible. Vous pouvez aussi l'envoyer à <strong>{EMAIL}</strong>.</p>
+        <p class="hint">Le plus rapide : <strong>Envoyer par e-mail</strong>, ajoutez une photo si possible, puis envoyez. Ou copiez le message et collez-le dans nos messages privés Instagram. Adresse : <strong>{EMAIL}</strong>.</p>
       </div>
     </div>
   </section>
