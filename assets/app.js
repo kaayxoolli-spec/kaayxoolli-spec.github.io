@@ -77,3 +77,35 @@
     $("f-type").addEventListener("change", () => { if ($("f-type").value === "Personne recherchée") $("f-cat").value = "Personnes"; });
   }
 })();
+
+// Vitrine « Découvrir le Sénégal » : filtre par rubrique et recherche.
+(function () {
+  const list = document.getElementById("dlist");
+  if (!list) return;
+  const norm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const cards = [...list.querySelectorAll(".fiche")];
+  cards.forEach(c => { c.dataset.text = norm(c.textContent); });
+  const q = document.getElementById("dq"), chips = document.getElementById("dcats");
+  let cat = "";
+  const params = new URLSearchParams(location.search);
+  if (params.get("q")) q.value = params.get("q");
+  function apply() {
+    const terms = norm(q.value.trim()).split(/\s+/).filter(Boolean);
+    let shown = 0;
+    for (const c of cards) {
+      const ok = (!cat || c.dataset.dc === cat) && terms.every(t => c.dataset.text.includes(t));
+      c.hidden = !ok; if (ok) shown++;
+    }
+    document.getElementById("dcount").textContent = `${shown} fiche${shown > 1 ? "s" : ""}`;
+    document.getElementById("dnone").hidden = shown > 0;
+  }
+  chips.addEventListener("click", e => {
+    const b = e.target.closest("[data-dc]"); if (!b) return;
+    cat = b.dataset.dc;
+    chips.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === b));
+    apply();
+  });
+  q.addEventListener("input", apply);
+  document.getElementById("dsearch").addEventListener("submit", e => { e.preventDefault(); apply(); });
+  apply();
+})();

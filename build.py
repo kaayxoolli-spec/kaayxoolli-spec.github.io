@@ -31,6 +31,8 @@ SHEET_CSV_URL = setting("SHEET_CSV_URL")
 GOOGLE_VERIFICATION = setting("GOOGLE_VERIFICATION")
 BING_VERIFICATION = setting("BING_VERIFICATION")
 INDEXNOW_KEY = setting("INDEXNOW_KEY")
+# Compteur de visites GoatCounter (gratuit, sans cookies) : le nom choisi sur goatcounter.com, ex. "kaayxool"
+GOATCOUNTER_CODE = setting("GOATCOUNTER_CODE")
 
 INSTAGRAM = "kaayxoolli"
 EMAIL = "kaayxoolli@gmail.com"
@@ -58,6 +60,33 @@ LIEUX = {
     "Ziguinchor": "le port ou le marché Saint-Maur",
 }
 QUICK = ["Carte d'identité", "Téléphone", "Clés", "Passeport", "Chat", "Portefeuille"]
+
+# Découvrir le Sénégal : rubriques et fiches de la vitrine Kaay Xool
+DCATS = [("lieux", "Lieux"), ("religieux", "Lieux saints"), ("cuisine", "Gastronomie"), ("events", "Événements"),
+         ("culture", "Culture et wolof"), ("boutiques", "Boutiques")]
+PHOTO_CRED = {
+    "goree": "Adjoajo · CC BY-SA 4.0", "lacrose": "Arnault · CC BY-SA 2.0", "ngor": "Olha Pererva · CC BY-SA 4.0",
+    "corniche": "Issiaga_Photography · CC BY-SA 4.0", "saly": "DJIBSSON · CC BY-SA 4.0", "thieb": "Alweaver2 · CC BY-SA 4.0",
+    "bissap": "Kalamuh 045 · CC BY-SA 4.0", "attaya": "Ajocom · CC BY-SA 4.0",
+}
+FICHES = [
+    ("lieux", "Île de Gorée", "goree", "", "Île historique au large de Dakar, inscrite au patrimoine mondial de l'UNESCO. Maison des Esclaves, ruelles colorées, sans voitures.", ["Dakar", "20 min de chaloupe"]),
+    ("lieux", "Lac Rose (Retba)", "lacrose", "", "Lac aux reflets roses selon la lumière, où l'on récolte le sel à la main. Balades en pirogue et dunes autour.", ["Rufisque", "≈ 35 km de Dakar"]),
+    ("lieux", "Île de Ngor", "ngor", "", "Petite île face à la pointe des Almadies : plages calmes, eau claire et restaurants de poisson.", ["Dakar", "Pirogue depuis Ngor"]),
+    ("lieux", "Corniche de Dakar", "corniche", "", "Route côtière pour marcher, courir ou faire du sport face à l'océan, surtout en fin de journée.", ["Dakar", "Gratuit"]),
+    ("lieux", "Saly et la Petite Côte", "saly", "", "Station balnéaire de la Petite Côte : plages, hôtels, pêche et sorties en mer.", ["Mbour", "≈ 80 km de Dakar"]),
+    ("religieux", "Touba et la Grande Mosquée", "", "Touba", "Ville sainte du mouridisme, fondée par Cheikh Ahmadou Bamba. Sa Grande Mosquée est l'une des plus grandes d'Afrique de l'Ouest.", ["Diourbel", "Tenue correcte exigée"]),
+    ("religieux", "Grand Magal de Touba", "", "Magal", "Grand pèlerinage annuel qui commémore le départ en exil de Cheikh Ahmadou Bamba. Des millions de fidèles convergent vers Touba.", ["Touba", "18 Safar, chaque année"]),
+    ("religieux", "Gamou de Tivaouane", "", "Gamou", "Célébration de la naissance du Prophète (Maouloud), grand rendez-vous de la confrérie tidiane à Tivaouane.", ["Thiès", "Nuit du Maouloud"]),
+    ("religieux", "Pèlerinage marial de Popenguine", "", "Popenguine", "Pèlerinage catholique au sanctuaire Notre-Dame de la Délivrande, sur la Petite Côte.", ["Thiès", "Week-end de Pentecôte"]),
+    ("cuisine", "Thiéboudienne", "thieb", "", "Le plat national : riz cuit dans un bouillon de poisson et de légumes. Se partage autour du bol.", ["Plat", "Midi"]),
+    ("cuisine", "Bissap", "bissap", "", "Boisson à base de fleurs d'hibiscus, servie bien fraîche, parfois avec menthe ou fleur d'oranger.", ["Boisson", "Rafraîchissant"]),
+    ("cuisine", "Attaya", "attaya", "", "Le thé à la menthe en trois verres, préparé lentement : un moment de discussion et de teranga.", ["Boisson", "Trois verres"]),
+    ("events", "JOJ Dakar 2026", "", "JOJ", "Jeux Olympiques de la Jeunesse, premiers Jeux olympiques organisés en Afrique, à Dakar, Diamniadio et Saly.", ["31 oct. – 13 nov. 2026", "Dakar · Diamniadio · Saly"]),
+    ("culture", "Mots de wolof utiles", "", "Salaam", "Nanga def ? (Comment ça va ?) · Maa ngi fi (Ça va) · Jërëjëf (Merci) · Ba beneen (À la prochaine).", ["Langue", "Pour bien accueillir"]),
+    ("culture", "La teranga", "", "Teranga", "L'hospitalité sénégalaise : accueillir, partager le repas, offrir l'attaya. Le cœur de l'esprit Kaay Xool.", ["Valeur", "Partout au Sénégal"]),
+    ("boutiques", "Ta boutique ici", "", "+", f"Mode, cosmétique, parfumerie, artisanat, services… Une fiche avec photos et contact. Écris à Kaay Xool sur Instagram @{INSTAGRAM}.", ["Pour les commerçants"]),
+]
 
 
 def plain(s):
@@ -136,6 +165,9 @@ def head(title, desc, path, extra=""):
         verif += f'<meta name="google-site-verification" content="{e(GOOGLE_VERIFICATION)}">\n'
     if BING_VERIFICATION:
         verif += f'<meta name="msvalidate.01" content="{e(BING_VERIFICATION)}">\n'
+    if GOATCOUNTER_CODE:
+        verif += (f'<script data-goatcounter="https://{e(GOATCOUNTER_CODE)}.goatcounter.com/count" '
+                  'async src="https://gc.zgo.at/count.js"></script>\n')
     return f"""<!doctype html>
 <html lang="fr">
 <head>
@@ -211,6 +243,71 @@ def card(a):
 </article>"""
 
 
+NAV = (f'<nav class="nav" aria-label="Rubriques"><a href="{SITE_URL}/decouvrir.html">Découvrir le Sénégal</a>'
+       f'<a href="{SITE_URL}/#t-annonces">Objets perdus et trouvés</a><a href="{SITE_URL}/#declarer">Déclarer</a></nav>')
+
+
+def fiche_card(f):
+    cat, titre, img, glyph, desc, meta = f
+    label = dict(DCATS)[cat]
+    if img:
+        visual = (f'<div class="fiche-ph"><img src="{SITE_URL}/assets/decouvrir/{img}.jpg" alt="{e(titre)}" loading="lazy" width="640" height="400">'
+                  f'<span class="cred">Photo : {e(PHOTO_CRED[img])} · Wikimedia Commons</span></div>')
+    else:
+        visual = f'<div class="fiche-ph glyph" aria-hidden="true">{e(glyph)}</div>'
+    pills = "".join(f"<span>{e(m)}</span>" for m in meta)
+    return f"""<article class="card fiche" data-dc="{cat}">
+  {visual}<div class="in">
+    <span class="dcat">{e(label)}</span>
+    <h3>{e(titre)}</h3>
+    <p class="desc">{e(desc)}</p>
+    <div class="meta">{pills}</div>
+  </div>
+</article>"""
+
+
+def decouvrir_page():
+    title = "Découvrir le Sénégal – lieux, lieux saints, cuisine | Kaay Xool"
+    desc = ("Île de Gorée, Lac Rose, Touba et le Grand Magal, thiéboudienne, bissap, mots de wolof : "
+            "la vitrine du Sénégal par Kaay Xool, pour les visiteurs, la diaspora et les Sénégalais.")
+    chips = '<button type="button" class="chip" data-dc="" aria-pressed="true">Tout</button>' + "".join(
+        f'<button type="button" class="chip" data-dc="{k}" aria-pressed="false">{e(v)}</button>' for k, v in DCATS)
+    cards = "\n".join(fiche_card(f) for f in FICHES)
+    return head(title, desc, "/decouvrir.html") + f"""<header class="hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <a href="{SITE_URL}/"><img class="logo" src="{SITE_URL}/assets/logo.png" alt="Kaay Xool" width="520" height="332"></a>
+      <a class="ig" href="https://www.instagram.com/{INSTAGRAM}/" rel="noopener">@{INSTAGRAM}</a>
+    </div>
+    <h1>Découvre le Sénégal. <em>Kaay xool</em>, viens voir.</h1>
+    <p>Lieux à visiter, lieux saints, cuisine, culture et boutiques, au même endroit. <span class="free">100 % gratuit</span></p>
+    <form class="search" id="dsearch" role="search" action="{SITE_URL}/decouvrir.html">
+      <input id="dq" name="q" type="search" placeholder="Plage, Touba, thiéb, wolof…" aria-label="Chercher dans la vitrine" autocomplete="off">
+      <button class="btn lime" type="submit">Chercher</button>
+    </form>
+    {NAV}
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="crumb"><a href="{SITE_URL}/">← Objets perdus et trouvés</a></p>
+  <section aria-labelledby="t-vitrine">
+    <h2 id="t-vitrine">Découvrir le Sénégal</h2>
+    <div class="filters"><div class="chips" id="dcats" role="group" aria-label="Rubrique">{chips}</div></div>
+    <p class="count" id="dcount" aria-live="polite"></p>
+    <div class="grid" id="dlist">
+{cards}
+    </div>
+    <div class="empty" id="dnone" hidden><b>Aucune fiche ne correspond</b>Essayez un autre mot ou choisissez « Tout ».</div>
+  </section>
+  <section class="block" aria-labelledby="t-boutique">
+    <h2 id="t-boutique">Ta boutique dans la vitrine</h2>
+    <div class="panel"><p>Commerçant, artisan, restaurant, agence ou entreprise ? Kaay Xool présente ton activité avec photos, description et contact. Écris-nous sur Instagram <a href="https://ig.me/m/{INSTAGRAM}" rel="noopener">@{INSTAGRAM}</a> ou à <strong>{EMAIL}</strong>.</p></div>
+  </section>
+</main>
+""" + FOOTER
+
+
 def opts(items):
     return "".join(f"<option>{e(x)}</option>" for x in items)
 
@@ -260,6 +357,7 @@ def index_page(rows):
       <button class="btn lime" type="submit">Chercher</button>
     </form>
     <div class="quick" id="quick"><span>Recherches fréquentes :</span>{quick}</div>
+    {NAV}
   </div>
 </header>
 
@@ -302,6 +400,13 @@ def index_page(rows):
         <p class="hint">Le plus rapide : <strong>Envoyer par e-mail</strong>, ajoutez une photo si possible, puis envoyez. Ou copiez le message et collez-le dans nos messages privés Instagram. Adresse : <strong>{EMAIL}</strong>.</p>
       </div>
     </div>
+  </section>
+
+  <section class="block" aria-labelledby="t-decouvrir">
+    <h2 id="t-decouvrir">Découvrir le Sénégal</h2>
+    <p class="lead">Lieux à visiter, lieux saints, cuisine, culture et boutiques : la vitrine du Sénégal par Kaay Xool.</p>
+    <div class="grid">{"".join(fiche_card(f) for f in [x for x in FICHES if x[2]][:3])}</div>
+    <p class="actions" style="margin-top:14px"><a class="btn lime" href="{SITE_URL}/decouvrir.html">Voir toute la vitrine</a></p>
   </section>
 
   <section class="block" aria-labelledby="t-comment">
@@ -437,6 +542,7 @@ def main():
     (OUT / "objets-perdus").mkdir()
     shutil.copytree(ROOT / "assets", OUT / "assets")
     (OUT / "index.html").write_text(index_page(rows), encoding="utf-8")
+    (OUT / "decouvrir.html").write_text(decouvrir_page(), encoding="utf-8")
     for a in rows:
         (OUT / "annonce" / f"{a['ref']}.html").write_text(annonce_page(a), encoding="utf-8")
     villes = [v for v in VILLES if v != "Autre"]
@@ -446,7 +552,8 @@ def main():
                                   + f'<main class="wrap"><h1>Page introuvable</h1><p><a href="{SITE_URL}/">Retour aux annonces</a></p></main>' + FOOTER,
                                   encoding="utf-8")
     today = date.today().isoformat()
-    urls = [f"  <url><loc>{SITE_URL}/</loc><lastmod>{today}</lastmod></url>"] + [
+    urls = [f"  <url><loc>{SITE_URL}/</loc><lastmod>{today}</lastmod></url>",
+            f"  <url><loc>{SITE_URL}/decouvrir.html</loc></url>"] + [
         f"  <url><loc>{SITE_URL}/objets-perdus/{slug(v)}.html</loc></url>" for v in villes] + [
         f"  <url><loc>{SITE_URL}/annonce/{e(a['ref'])}.html</loc></url>" for a in rows]
     (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'

@@ -117,3 +117,15 @@ textarea{resize:vertical;min-height:70px}
 
 footer{border-top:1px solid var(--line);padding-block:20px 32px;color:var(--muted);font-size:13px;margin-top:40px}
 footer p{margin:0 0 8px;max-width:70ch}
+
+/* Rubriques et vitrine « Découvrir le Sénégal » */
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.nav a{color:#fff;text-decoration:none;font-size:14px;font-weight:600;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:6px 14px}
+.nav a:hover{border-color:var(--lime);color:var(--lime)}
+.lead{color:var(--ink-2);margin:-4px 0 14px;max-width:62ch}
+.fiche-ph{position:relative;aspect-ratio:16/10;max-width:100%;background:var(--surface-2);overflow:hidden}
+.fiche-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.fiche-ph.glyph{display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:40px;color:var(--muted);background:repeating-linear-gradient(45deg,var(--surface-2) 0 14px,var(--line) 14px 15px)}
+.fiche-ph .cred{position:absolute;right:6px;bottom:6px;font-size:10.5px;background:rgba(0,0,0,.6);color:#fff;padding:2px 6px;border-radius:6px}
+.dcat{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green-text)}
+.fiche .meta span{background:var(--surface-2);border-radius:6px;padding:3px 8px}
