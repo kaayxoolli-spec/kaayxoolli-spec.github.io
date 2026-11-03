@@ -556,7 +556,7 @@ def xamtabax_page():
     title = "XAMTABAX Ingénierie – bureau d'études, suivi et contrôle des travaux à Dakar"
     desc = ("Études, suivi de chantier, assistance au maître d'ouvrage et suivi de chantier pour la diaspora. "
             "Routes, hydraulique, bâtiment, électricité, télécoms, solaire. Dakar, Sénégal.")
-    wa = "https://wa.me/221773703014?text=" + "Bonjour%20XAMTABAX%2C%20j%27ai%20un%20projet%20de%20construction"
+    wa = "https://wa.me/221768888000?text=" + "Bonjour%20XAMTABAX%2C%20j%27ai%20un%20projet%20de%20construction"
     css = """<style>
 .xt-hero{background:#14324F;color:#fff;padding:40px 0 34px}
 .xt-hero h1{font-family:Montserrat,sans-serif;font-size:clamp(34px,8vw,60px);margin:0;letter-spacing:1px}
@@ -589,8 +589,8 @@ def xamtabax_page():
     <p><span class="slg">« Xam-xam ci sa tabax »</span> : le savoir au service de ta construction.<br>
     Bureau d'études, suivi et contrôle des travaux, à Dakar et dans tout le Sénégal.</p>
     <div class="xt-btns">
-      <a class="xt-wa" href="{wa}" rel="noopener">💬 WhatsApp : 77 370 30 14</a>
-      <a class="xt-mail" href="mailto:gueyejob@gmail.com?subject=Projet%20XAMTABAX">✉️ gueyejob@gmail.com</a>
+      <a class="xt-wa" href="{wa}" rel="noopener">💬 WhatsApp : 76 888 80 00</a>
+      <a class="xt-mail" href="mailto:kaayxoolli@gmail.com?subject=Projet%20XAMTABAX">✉️ kaayxoolli@gmail.com</a>
       <a class="xt-pdf" href="{SITE_URL}/assets/xamtabax/XAMTABAX_Ingenierie_plaquette.pdf">📄 Télécharger la plaquette</a>
     </div>
   </div>
