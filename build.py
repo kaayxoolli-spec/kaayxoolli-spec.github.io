@@ -244,7 +244,8 @@ def card(a):
 
 
 NAV = (f'<nav class="nav" aria-label="Rubriques"><a href="{SITE_URL}/decouvrir.html">Découvrir le Sénégal</a>'
-       f'<a href="{SITE_URL}/#t-annonces">Objets perdus et trouvés</a><a href="{SITE_URL}/#declarer">Déclarer</a></nav>')
+       f'<a href="{SITE_URL}/#t-annonces">Objets perdus et trouvés</a><a href="{SITE_URL}/#declarer">Déclarer</a>'
+       f'<a href="{SITE_URL}/xamtabax.html">XAMTABAX Ingénierie</a></nav>')
 
 
 def fiche_card(f):
@@ -534,6 +535,81 @@ def city_page(ville, rows):
 """ + FOOTER
 
 
+
+XT_SERVICES = [
+    ("📐", "Études", "Plans et DAO (AutoCAD), métrés, devis quantitatifs et estimatifs, dossiers d'appel d'offres."),
+    ("👷", "Suivi des travaux", "Surveillance de chantier, contrôle des quantités et de la qualité, validation des attachements et décomptes, réception."),
+    ("🤝", "Assistance au maître d'ouvrage", "Choix de l'entreprise, analyse des offres, contrats, planning et suivi du budget."),
+    ("🌍", "Suivi de chantier diaspora", "Tu construis au pays depuis l'étranger ? Visite chaque semaine, photos, rapport et vérification des factures."),
+]
+XT_DOMAINES = ["Routes et VRD", "Hydraulique", "Assainissement", "Bâtiment", "Électricité",
+               "Télécommunications", "Énergie solaire", "Topographie et géotechnique"]
+XT_REFS = ["VDN Section 3 : 15 km, 3 autoponts (conducteur de travaux)",
+           "PROMOVILLES lots 1 et 2, Dakar et Rufisque (chef de projet)",
+           "VRD Senelec Hann : réseaux, voiries, bassins",
+           "Châteaux d'eau et forages : Louga, Nguidilé, Boulal",
+           "Campus social UGB, Saint-Louis : bâtiments R+4",
+           "15 ans de chantiers routes, VRD, hydraulique et bâtiment"]
+
+
+def xamtabax_page():
+    title = "XAMTABAX Ingénierie – bureau d'études, suivi et contrôle des travaux à Dakar"
+    desc = ("Études, suivi de chantier, assistance au maître d'ouvrage et suivi de chantier pour la diaspora. "
+            "Routes, hydraulique, bâtiment, électricité, télécoms, solaire. Dakar, Sénégal.")
+    wa = "https://wa.me/221773703014?text=" + "Bonjour%20XAMTABAX%2C%20j%27ai%20un%20projet%20de%20construction"
+    css = """<style>
+.xt-hero{background:#14324F;color:#fff;padding:40px 0 34px}
+.xt-hero h1{font-family:Montserrat,sans-serif;font-size:clamp(34px,8vw,60px);margin:0;letter-spacing:1px}
+.xt-hero h1 span{color:#E9B949}
+.xt-hero .sub{letter-spacing:6px;color:#cfe3d6;font-weight:600;margin:4px 0 16px}
+.xt-hero p{max-width:720px}
+.xt-hero .slg{color:#E9B949;font-weight:600}
+.xt-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.xt-btns a{display:inline-block;padding:12px 18px;border-radius:10px;font-weight:600;text-decoration:none}
+.xt-wa{background:#25D366;color:#06301a}.xt-mail{background:#E9B949;color:#14324F}.xt-pdf{background:#fff;color:#14324F}
+.xt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;margin:14px 0 28px}
+.xt-card{background:#F3F7F4;border-left:6px solid #1E7B3A;border-radius:12px;padding:16px 18px}
+.xt-card h3{margin:0 0 6px;color:#14324F}
+.xt-card.hl{background:#FFF6DD;border-left-color:#E9B949}
+.xt-dom{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 28px;padding:0;list-style:none}
+.xt-dom li{background:#14324F;color:#fff;border-radius:999px;padding:8px 14px;font-weight:600}
+.xt-refs li{margin-bottom:6px}
+.xt-note{font-size:.9em;color:#6b7a87;font-style:italic}
+.xt-img{max-width:100%;height:auto;border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.12);margin-top:10px}
+</style>"""
+    cards = "".join(f'<article class="xt-card{" hl" if "diaspora" in t else ""}"><h3>{i} {e(t)}</h3><p>{e(d)}</p></article>'
+                    for i, t, d in XT_SERVICES)
+    doms = "".join(f"<li>{e(d)}</li>" for d in XT_DOMAINES)
+    refs = "".join(f"<li>{e(r)}</li>" for r in XT_REFS)
+    return head(title, desc, "/xamtabax.html", css) + f"""<header class="xt-hero">
+  <div class="wrap">
+    <p class="crumb"><a href="{SITE_URL}/" style="color:#cfe3d6">← Kaay Xool</a></p>
+    <h1>XAM<span>TABAX</span></h1>
+    <div class="sub">INGÉNIERIE</div>
+    <p><span class="slg">« Xam-xam ci sa tabax »</span> : le savoir au service de ta construction.<br>
+    Bureau d'études, suivi et contrôle des travaux, à Dakar et dans tout le Sénégal.</p>
+    <div class="xt-btns">
+      <a class="xt-wa" href="{wa}" rel="noopener">💬 WhatsApp : 77 370 30 14</a>
+      <a class="xt-mail" href="mailto:gueyejob@gmail.com?subject=Projet%20XAMTABAX">✉️ gueyejob@gmail.com</a>
+      <a class="xt-pdf" href="{SITE_URL}/assets/xamtabax/XAMTABAX_Ingenierie_plaquette.pdf">📄 Télécharger la plaquette</a>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  <h2>Nos services</h2>
+  <div class="xt-grid">{cards}</div>
+  <h2>Nos domaines d'intervention</h2>
+  <ul class="xt-dom">{doms}</ul>
+  <h2>L'expérience de notre ingénieur fondateur</h2>
+  <p><strong>Matsarr GUEYE</strong>, ingénieur génie civil, spécialité routes et ouvrages d'art.</p>
+  <ul class="xt-refs">{refs}</ul>
+  <p class="xt-note">Références acquises par Matsarr GUEYE au sein des entreprises où il a exercé.</p>
+  <h2>La plaquette</h2>
+  <img class="xt-img" src="{SITE_URL}/assets/xamtabax/plaquette.jpg" alt="Plaquette XAMTABAX Ingénierie" width="1240" height="1754" loading="lazy">
+</main>
+""" + FOOTER
+
+
 def main():
     rows = read_rows()
     if OUT.exists():
@@ -543,6 +619,7 @@ def main():
     shutil.copytree(ROOT / "assets", OUT / "assets")
     (OUT / "index.html").write_text(index_page(rows), encoding="utf-8")
     (OUT / "decouvrir.html").write_text(decouvrir_page(), encoding="utf-8")
+    (OUT / "xamtabax.html").write_text(xamtabax_page(), encoding="utf-8")
     for a in rows:
         (OUT / "annonce" / f"{a['ref']}.html").write_text(annonce_page(a), encoding="utf-8")
     villes = [v for v in VILLES if v != "Autre"]
@@ -553,7 +630,8 @@ def main():
                                   encoding="utf-8")
     today = date.today().isoformat()
     urls = [f"  <url><loc>{SITE_URL}/</loc><lastmod>{today}</lastmod></url>",
-            f"  <url><loc>{SITE_URL}/decouvrir.html</loc></url>"] + [
+            f"  <url><loc>{SITE_URL}/decouvrir.html</loc></url>",
+            f"  <url><loc>{SITE_URL}/xamtabax.html</loc></url>"] + [
         f"  <url><loc>{SITE_URL}/objets-perdus/{slug(v)}.html</loc></url>" for v in villes] + [
         f"  <url><loc>{SITE_URL}/annonce/{e(a['ref'])}.html</loc></url>" for a in rows]
     (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
