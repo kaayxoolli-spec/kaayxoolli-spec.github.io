@@ -13,6 +13,7 @@ import re
 import shutil
 import unicodedata
 import urllib.request
+from urllib.parse import quote
 from datetime import date
 from html import escape as e
 from pathlib import Path
@@ -576,7 +577,46 @@ def xamtabax_page():
 .xt-refs li{margin-bottom:6px}
 .xt-note{font-size:.9em;color:#6b7a87;font-style:italic}
 .xt-img{max-width:100%;height:auto;border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.12);margin-top:10px}
+.xt-offres{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px;margin:14px 0 30px}
+.xt-offre{background:#fff;border:2px solid #14324F;border-radius:14px;padding:18px;display:flex;flex-direction:column}
+.xt-offre.top{border-color:#E9B949;background:#FFF9E8}
+.xt-offre h3{margin:0 0 4px;color:#14324F;font-size:1.1em}
+.xt-prix{font-family:Montserrat,sans-serif;font-size:1.7em;font-weight:800;color:#1E7B3A;margin:4px 0 8px}
+.xt-prix small{font-size:.5em;color:#6b7a87;font-weight:600}
+.xt-offre ul{padding-left:18px;margin:0 0 14px;flex:1}
+.xt-offre a{display:block;text-align:center;background:#25D366;color:#06301a;font-weight:700;padding:11px;border-radius:10px;text-decoration:none}
+.xt-vids{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px;margin:14px 0 14px}
+.xt-vids video{width:100%;aspect-ratio:9/16;border-radius:12px;background:#14324F}
+.xt-social{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 30px}
+.xt-social a{padding:11px 16px;border-radius:10px;font-weight:700;text-decoration:none;color:#fff}
+.xt-yt{background:#E62117}.xt-tt{background:#111}
 </style>"""
+    def wa_for(msg):
+        return "https://wa.me/221768888000?text=" + quote(msg)
+    offres = [
+        ("Contrôle de devis", "15 000 F", "", False,
+         ["Quantités recalculées (ciment, fer, béton)", "Lignes gonflées signalées", "Réponse sous 24 h sur WhatsApp"],
+         "Bonjour XAMTABAX, je veux faire contrôler mon devis (15 000 F)."),
+        ("Suivi de chantier diaspora", "75 000 F", "/ mois", True,
+         ["Visites de contrôle sur ton chantier", "Photos et vidéos chaque semaine", "Rapport clair, sans jargon"],
+         "Bonjour XAMTABAX, je construis depuis l'étranger et je veux un suivi de chantier."),
+        ("Guide « Construire au Sénégal »", "5 000 F", "PDF", False,
+         ["15 pages de conseils pratiques", "Prix, dosages, pièges à éviter", "Envoyé directement sur WhatsApp"],
+         "Bonjour XAMTABAX, je veux le guide Construire au Sénégal (5 000 F)."),
+    ]
+    offres_html = "".join(
+        f'<article class="xt-offre{" top" if top else ""}"><h3>{e(t)}</h3>'
+        f'<div class="xt-prix">{e(p)} <small>{e(u)}</small></div>'
+        f'<ul>{"".join(f"<li>{e(x)}</li>" for x in pts)}</ul>'
+        f'<a href="{wa_for(m)}" rel="noopener">💬 Commander sur WhatsApp</a></article>'
+        for t, p, u, top, pts, m in offres)
+    vids = [("XT_fondation_R1_150m2.mp4", "Combien coûte la fondation d'une R+1 de 150 m² ?"),
+            ("XT_tonne_ciment_sacs.mp4", "Une tonne de ciment, c'est combien de sacs ?"),
+            ("XT_conseil1_vol.mp4", "Construire depuis l'étranger : 3 façons dont on te vole")]
+    vids_html = "".join(
+        f'<figure style="margin:0"><video controls preload="metadata" playsinline src="{SITE_URL}/assets/videos/{f}#t=0.5" '
+        f'aria-label="{e(c)}"></video><figcaption style="font-size:.9em;margin-top:6px">{e(c)}</figcaption></figure>'
+        for f, c in vids)
     cards = "".join(f'<article class="xt-card{" hl" if "diaspora" in t else ""}"><h3>{i} {e(t)}</h3><p>{e(d)}</p></article>'
                     for i, t, d in XT_SERVICES)
     doms = "".join(f"<li>{e(d)}</li>" for d in XT_DOMAINES)
@@ -596,6 +636,8 @@ def xamtabax_page():
   </div>
 </header>
 <main class="wrap">
+  <h2>Nos offres</h2>
+  <div class="xt-offres">{offres_html}</div>
   <h2>Nos services</h2>
   <div class="xt-grid">{cards}</div>
   <h2>Nos domaines d'intervention</h2>
@@ -604,6 +646,12 @@ def xamtabax_page():
   <p><strong>Matsarr GUEYE</strong>, ingénieur génie civil, spécialité routes et ouvrages d'art.</p>
   <ul class="xt-refs">{refs}</ul>
   <p class="xt-note">Références acquises par Matsarr GUEYE au sein des entreprises où il a exercé.</p>
+  <h2>Nos conseils en vidéo</h2>
+  <div class="xt-vids">{vids_html}</div>
+  <div class="xt-social">
+    <a class="xt-yt" href="https://www.youtube.com/@xamtabax" rel="noopener">▶ Chaîne YouTube</a>
+    <a class="xt-tt" href="https://www.tiktok.com/@kaay.xool8" rel="noopener">♪ TikTok</a>
+  </div>
   <h2>La plaquette</h2>
   <img class="xt-img" src="{SITE_URL}/assets/xamtabax/plaquette.jpg" alt="Plaquette XAMTABAX Ingénierie" width="1240" height="1754" loading="lazy">
 </main>
