@@ -632,6 +632,7 @@ def xamtabax_page():
       <a class="xt-wa" href="{wa}" rel="noopener">💬 WhatsApp : 76 888 80 00</a>
       <a class="xt-mail" href="mailto:kaayxoolli@gmail.com?subject=Projet%20XAMTABAX">✉️ kaayxoolli@gmail.com</a>
       <a class="xt-pdf" href="{SITE_URL}/assets/xamtabax/XAMTABAX_Ingenierie_plaquette.pdf">📄 Télécharger la plaquette</a>
+      <a class="xt-mail" href="{SITE_URL}/academy.html">🎓 Formations XAMXAM Academy</a>
     </div>
   </div>
 </header>
@@ -658,6 +659,113 @@ def xamtabax_page():
 """ + FOOTER
 
 
+ACADEMY_FORMATIONS = [
+    ("Informatique et gestion", [
+        ("Bureautique Word et Excel", "30 h", "60 000 F"),
+        ("Comptabilité pratique et Excel de gestion", "30 h", "75 000 F"),
+        ("Marketing digital pour commerçants", "20 h", "40 000 F"),
+        ("Initiation informatique pour collégiens", "20 h", "25 000 F"),
+    ]),
+    ("BTP (XAMTABAX)", [
+        ("AutoCAD bâtiment et VRD", "40 h", "75 000 F"),
+        ("Topographie de chantier", "30 h", "90 000 F"),
+    ]),
+    ("Électricité et plomberie", [
+        ("Électricité du bâtiment", "40 h", "60 000 F"),
+        ("Plomberie sanitaire", "30 h", "50 000 F"),
+    ]),
+]
+
+
+def academy_page():
+    title = "XAMXAM Academy – formations courtes à Tivaouane Peulh (Cité Apix)"
+    desc = ("Pré-inscriptions ouvertes : informatique, bureautique, comptabilité, AutoCAD, topographie, "
+            "électricité et plomberie. Centre de formation près du CEM Apix, Tivaouane Peulh.")
+    css = """<style>
+.ac-hero{background:#13124A;color:#fff;padding:40px 0 32px}
+.ac-hero h1{font-family:Montserrat,sans-serif;font-size:clamp(32px,8vw,56px);margin:0}
+.ac-hero h1 span{color:#B6E21E}
+.ac-hero p{max-width:720px}
+.ac-tag{display:inline-block;background:#B6E21E;color:#13124A;font-weight:700;border-radius:999px;padding:6px 14px;margin:10px 0 4px}
+.ac-pole{margin:22px 0 6px;color:#13124A}
+.ac-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.ac-f{background:#F4F5FB;border-left:6px solid #13124A;border-radius:12px;padding:14px 16px}
+.ac-f h3{margin:0 0 4px;font-size:1.02em;color:#13124A}
+.ac-f p{margin:0;color:#4a4f6a}.ac-f strong{color:#1E7B3A}
+.ac-form{background:#fff;border:2px solid #13124A;border-radius:16px;padding:20px;margin:28px 0;display:grid;gap:14px;max-width:640px}
+.ac-form label{display:grid;gap:6px;font-weight:600;color:#13124A}
+.ac-form input,.ac-form select{font:inherit;padding:11px 12px;border:1.5px solid #b9bdd6;border-radius:10px;width:100%;box-sizing:border-box;background:#fff}
+.ac-form fieldset{border:0;padding:0;margin:0;display:grid;gap:8px}
+.ac-form legend{font-weight:600;color:#13124A;margin-bottom:6px}
+.ac-chk{display:flex;flex-wrap:wrap;gap:8px}
+.ac-form .ac-chk label{display:flex;flex-direction:row;align-items:center;gap:6px;font-weight:500;background:#F4F5FB;border-radius:999px;padding:7px 12px}
+.ac-form .ac-chk input{width:auto;margin:0;padding:0}
+#inscription{margin-top:30px}
+.ac-form button{font:inherit;font-weight:700;background:#25D366;color:#06301a;border:0;border-radius:12px;padding:14px;cursor:pointer;font-size:1.05em}
+.ac-err{color:#b3261e;font-weight:600;min-height:1.2em;margin:0}
+.ac-note{font-size:.9em;color:#5d6278}
+</style>"""
+    blocks = ""
+    opts_html = ""
+    for pole, items in ACADEMY_FORMATIONS:
+        cards = "".join(f'<article class="ac-f"><h3>{e(n)}</h3><p>{e(d)} · <strong>{e(p)}</strong></p></article>'
+                        for n, d, p in items)
+        blocks += f'<h3 class="ac-pole">{e(pole)}</h3><div class="ac-list">{cards}</div>'
+        opts_html += f'<optgroup label="{e(pole)}">' + "".join(
+            f'<option value="{e(n)}">{e(n)} ({e(p)})</option>' for n, d, p in items) + "</optgroup>"
+    js = """<script>
+document.getElementById('ac-form').addEventListener('submit',function(ev){
+  ev.preventDefault();
+  var f=ev.target, err=document.getElementById('ac-err');
+  var nom=f.nom.value.trim(), tel=f.tel.value.trim(), form=f.formation.value;
+  if(!nom||!tel||!form){err.textContent='Merci de remplir le nom, le téléphone et la formation.';return;}
+  err.textContent='';
+  var cr=[].slice.call(f.querySelectorAll('input[name=creneau]:checked')).map(function(c){return c.value}).join(', ')||'à préciser';
+  var msg='Bonjour XAMXAM Academy, je veux me pré-inscrire.\\n'
+   +'Nom : '+nom+'\\nTéléphone : '+tel+'\\nFormation : '+form
+   +'\\nPour : '+f.pour.value+'\\nCréneaux : '+cr
+   +(f.quartier.value.trim()?'\\nQuartier : '+f.quartier.value.trim():'');
+  window.location.href='https://wa.me/221768888000?text='+encodeURIComponent(msg);
+});
+</script>"""
+    return head(title, desc, "/academy.html", css) + f"""<header class="ac-hero">
+  <div class="wrap">
+    <p class="crumb"><a href="{SITE_URL}/xamtabax.html" style="color:#d6d8f0">← XAMTABAX</a></p>
+    <h1>XAMXAM <span>Academy</span></h1>
+    <span class="ac-tag">Bientôt à la Cité Apix, près du CEM</span>
+    <p>Des formations courtes et pratiques à Tivaouane Peulh, de jour, le soir et le week-end, avec des formateurs de terrain et une attestation à la fin.</p>
+    <p><strong>Les pré-inscriptions sont ouvertes, sans paiement.</strong> Inscris-toi pour réserver ta place : on te rappelle dès que la date de ta session est fixée.</p>
+  </div>
+</header>
+<main class="wrap">
+  <h2>Les formations</h2>
+  <p class="ac-note">Prix de lancement, attestation comprise. Groupes de 8 à 12 personnes.</p>
+  {blocks}
+  <h2 id="inscription">Pré-inscription</h2>
+  <form id="ac-form" class="ac-form" novalidate>
+    <label>Nom et prénom<input name="nom" autocomplete="name" required></label>
+    <label>Téléphone (WhatsApp)<input name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="77 000 00 00" required></label>
+    <label>Formation<select name="formation" required><option value="">Choisir une formation</option>{opts_html}</select></label>
+    <label>C'est pour<select name="pour"><option>moi</option><option>mon enfant</option><option>un employé</option></select></label>
+    <fieldset><legend>Quand es-tu disponible ?</legend><div class="ac-chk">
+      <label><input type="checkbox" name="creneau" value="en journée"> En journée</label>
+      <label><input type="checkbox" name="creneau" value="le soir"> Le soir</label>
+      <label><input type="checkbox" name="creneau" value="le week-end"> Le week-end</label>
+      <label><input type="checkbox" name="creneau" value="le mercredi après-midi"> Le mercredi après-midi</label>
+    </div></fieldset>
+    <label>Quartier (facultatif)<input name="quartier" placeholder="Cité Apix, Keur Massar…"></label>
+    <p id="ac-err" class="ac-err" role="alert"></p>
+    <button type="submit">💬 Envoyer ma pré-inscription sur WhatsApp</button>
+    <p class="ac-note">Le bouton ouvre WhatsApp avec ton message déjà écrit : il ne part que quand tu appuies sur Envoyer. Le site ne garde aucune donnée.</p>
+  </form>
+</main>
+<footer><div class="wrap"><p>XAMXAM Academy · Tivaouane Peulh, Cité Apix · WhatsApp 76 888 80 00 · kaayxoolli@gmail.com</p></div></footer>
+{js}
+</body>
+</html>
+"""
+
+
 def main():
     rows = read_rows()
     if OUT.exists():
@@ -668,6 +776,7 @@ def main():
     (OUT / "index.html").write_text(index_page(rows), encoding="utf-8")
     (OUT / "decouvrir.html").write_text(decouvrir_page(), encoding="utf-8")
     (OUT / "xamtabax.html").write_text(xamtabax_page(), encoding="utf-8")
+    (OUT / "academy.html").write_text(academy_page(), encoding="utf-8")
     for a in rows:
         (OUT / "annonce" / f"{a['ref']}.html").write_text(annonce_page(a), encoding="utf-8")
     villes = [v for v in VILLES if v != "Autre"]
@@ -679,7 +788,8 @@ def main():
     today = date.today().isoformat()
     urls = [f"  <url><loc>{SITE_URL}/</loc><lastmod>{today}</lastmod></url>",
             f"  <url><loc>{SITE_URL}/decouvrir.html</loc></url>",
-            f"  <url><loc>{SITE_URL}/xamtabax.html</loc></url>"] + [
+            f"  <url><loc>{SITE_URL}/xamtabax.html</loc></url>",
+            f"  <url><loc>{SITE_URL}/academy.html</loc></url>"] + [
         f"  <url><loc>{SITE_URL}/objets-perdus/{slug(v)}.html</loc></url>" for v in villes] + [
         f"  <url><loc>{SITE_URL}/annonce/{e(a['ref'])}.html</loc></url>" for a in rows]
     (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
