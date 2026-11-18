@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>JÀPP Covoiturage</title>
+<meta name="description" content="JÀPP : covoiturage vérifié entre Tivaouane Peulh (Cité Apix) et le Plateau. Réserve une place dans une voiture qui fait déjà le trajet, ou propose tes places vides.">
+<link rel="canonical" href="https://kaayxoolli-spec.github.io/japp.html">
+<meta property="og:title" content="JÀPP Covoiturage">
+<meta property="og:description" content="Tivaouane Peulh → Plateau, en voiture, avec des conducteurs vérifiés.">
+<meta property="og:image" content="https://kaayxoolli-spec.github.io/assets/japp/icon.png">
+<meta name="theme-color" content="#0E2A47">
+<link rel="manifest" href="assets/japp/manifest.webmanifest">
+<link rel="icon" href="assets/japp/icon.png">
+<link rel="apple-touch-icon" href="assets/japp/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;500;600&display=swap">
+<script data-goatcounter="https://kaayxool.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+/* Layout: app shell, a road-sign header, a tab bar, one panel at a time */
+:root{
+  --ink:#0E2A47; --sign:#F5B700; --bg:#F3F5F8; --card:#FFFFFF; --text:#1B2330; --muted:#5B6576;
+  --line:#D9DEE6; --ok:#1E7B3A; --wa:#25D366;
+  --display:Montserrat,"Arial Black",system-ui,sans-serif; --body:Poppins,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{--bg:#0B1522;--card:#13202F;--text:#E8EDF4;--muted:#9AA6B8;--line:#26364A;--ok:#4CC072;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{background:var(--ink);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+header .wrap{padding-block:22px 18px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:.5px;line-height:1}
+.logo span{display:block;height:6px;background:var(--sign);border-radius:3px;margin-top:6px}
+.route{margin:16px 0 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:600}
+.stop{background:#fff;color:var(--ink);border-radius:8px;padding:6px 10px;font-size:.92em}
+.arrow{color:var(--sign);font-size:1.3em}
+.pitch{margin:12px 0 0;color:#D3DCE8;max-width:52ch}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto}
+nav button{font:inherit;font-weight:600;font-size:.9em;background:none;border:0;color:var(--muted);padding:14px 10px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+nav button[aria-selected=true]{color:var(--text);border-color:var(--sign)}
+nav button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--sign);outline-offset:2px}
+main{padding-block:20px 40px}
+h2{font-family:var(--display);font-size:1.35em;margin:0 0 6px;text-wrap:balance}
+.lead{color:var(--muted);margin:0 0 16px}
+.trips{display:grid;gap:12px}
+.trip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:8px}
+.trip-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.time{font-family:var(--display);font-weight:800;font-size:1.6em;font-variant-numeric:tabular-nums}
+.price{font-weight:700;font-variant-numeric:tabular-nums}
+.meta{color:var(--muted);font-size:.92em}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:.82em;font-weight:600;color:var(--ok)}
+.seats{font-weight:600}
+.btn{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 16px;cursor:pointer;width:100%;font-size:1em}
+.btn-wa{background:var(--wa);color:#06301a}
+.btn-ink{background:var(--ink);color:#fff}
+.empty{background:var(--card);border:2px dashed var(--line);border-radius:14px;padding:20px;text-align:left}
+.empty strong{display:block;font-size:1.05em;margin-bottom:4px}
+form{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:14px}
+label{display:grid;gap:6px;font-weight:600;font-size:.95em}
+input,select{font:inherit;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;width:100%;background:var(--bg);color:var(--text)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row > *{min-width:0}
+fieldset{border:0;padding:0;margin:0}
+legend{font-weight:600;font-size:.95em;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{display:flex;flex-direction:row;align-items:center;gap:6px;font-weight:500;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.chips input{width:auto;margin:0}
+.err{color:#C62828;font-weight:600;margin:0;min-height:1.2em}
+.note{color:var(--muted);font-size:.86em;margin:0}
+.rules{display:grid;gap:10px;padding:0;margin:0;list-style:none}
+.rules li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.rules b{display:block}
+.steps{counter-reset:s;display:grid;gap:10px;padding:0;margin:0 0 18px;list-style:none}
+.steps li{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start}
+.steps li::before{content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--sign);color:var(--ink);font-weight:800;font-family:var(--display)}
+.install{margin-top:18px}
+footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
+@media (max-width:420px){.row{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.trip{transition:transform .15s}.trip:hover{transform:translateY(-1px)}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><div class="logo">JÀPP<span></span></div></div>
+    <div class="route"><span class="stop">Tivaouane Peulh · Cité Apix</span><span class="arrow">⇄</span><span class="stop">Plateau</span></div>
+    <p class="pitch">Des voitures font déjà ce trajet chaque matin avec des places vides. Réserve une place chez un conducteur vérifié et partage les frais.</p>
+  </div>
+</header>
+<nav aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button role="tab" id="t-trajets" aria-selected="true" aria-controls="p-trajets">Trajets</button>
+    <button role="tab" id="t-place" aria-selected="false" aria-controls="p-place">Passager</button>
+    <button role="tab" id="t-conduis" aria-selected="false" aria-controls="p-conduis">Conducteur</button>
+    <button role="tab" id="t-securite" aria-selected="false" aria-controls="p-securite">Sécurité</button>
+  </div>
+</nav>
+<main class="wrap">
+
+<section id="p-trajets" role="tabpanel" aria-labelledby="t-trajets">
+  <h2>Trajets de la semaine</h2>
+  <p class="lead">Chaque conducteur a été vérifié par JÀPP (pièce d'identité, carte grise, plaque).</p>
+  <div id="trips" class="trips">
+    <div class="empty"><strong>Chargement des trajets…</strong></div>
+  </div>
+  <ol class="steps" style="margin-top:22px">
+    <li><div><b>Choisis un trajet</b><br><span class="meta">Heure de départ, point de rendez-vous, prix par place.</span></div></li>
+    <li><div><b>Réserve sur WhatsApp</b><br><span class="meta">JÀPP confirme ta place et te donne le nom et la plaque du conducteur.</span></div></li>
+    <li><div><b>Paie le conducteur</b><br><span class="meta">Par Wave ou Orange Money, à la montée.</span></div></li>
+  </ol>
+</section>
+
+<section id="p-place" role="tabpanel" aria-labelledby="t-place" hidden>
+  <h2>Je cherche une place</h2>
+  <p class="lead">Dis-nous quand tu pars : on te propose un conducteur vérifié sur ton trajet.</p>
+  <form id="f-place" novalidate>
+    <label for="pn">Prénom et nom<input id="pn" name="nom" autocomplete="name" required></label>
+    <label for="pt">Téléphone WhatsApp<input id="pt" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="77 000 00 00" required></label>
+    <div class="row">
+      <label for="ps">Sens<select id="ps" name="sens"><option>Tivaouane Peulh → Plateau</option><option>Plateau → Tivaouane Peulh</option><option>Aller et retour</option></select></label>
+      <label for="ph">Heure de départ<select id="ph" name="heure"><option>6h00 – 6h30</option><option selected>6h30 – 7h00</option><option>7h00 – 7h30</option><option>7h30 – 8h00</option><option>17h00 – 17h30</option><option>17h30 – 18h00</option><option>18h00 – 18h30</option><option>18h30 – 19h00</option></select></label>
+    </div>
+    <fieldset><legend>Quels jours ?</legend><div class="chips" id="pj">
+      <label><input type="checkbox" name="jour" value="lundi" checked> Lun</label>
+      <label><input type="checkbox" name="jour" value="mardi" checked> Mar</label>
+      <label><input type="checkbox" name="jour" value="mercredi" checked> Mer</label>
+      <label><input type="checkbox" name="jour" value="jeudi" checked> Jeu</label>
+      <label><input type="checkbox" name="jour" value="vendredi" checked> Ven</label>
+      <label><input type="checkbox" name="jour" value="samedi"> Sam</label>
+    </div></fieldset>
+    <label for="pq">Point de départ (quartier, repère)<input id="pq" name="lieu" placeholder="Ex. rond-point Cité Apix"></label>
+    <label for="pa">Point d'arrivée au Plateau<input id="pa" name="arrivee" placeholder="Ex. Place de l'Indépendance"></label>
+    <p class="err" id="e-place" role="alert"></p>
+    <button class="btn btn-wa" type="submit">💬 Envoyer ma demande sur WhatsApp</button>
+    <p class="note">Le bouton ouvre WhatsApp avec ton message déjà écrit. Il part seulement quand tu appuies sur Envoyer. Le site ne garde aucune donnée.</p>
+  </form>
+</section>
+
+<section id="p-conduis" role="tabpanel" aria-labelledby="t-conduis" hidden>
+  <h2>Je conduis : je propose mes places</h2>
+  <p class="lead">Tu fais déjà le trajet ? Prends 1 à 3 passagers vérifiés du quartier et partage tes frais d'essence et de péage.</p>
+  <form id="f-conduis" novalidate>
+    <label for="cn">Prénom et nom<input id="cn" name="nom" autocomplete="name" required></label>
+    <label for="ct">Téléphone WhatsApp<input id="ct" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="77 000 00 00" required></label>
+    <div class="row">
+      <label for="cv">Voiture (marque, couleur)<input id="cv" name="voiture" placeholder="Ex. Toyota grise" required></label>
+      <label for="cp">Places libres<select id="cp" name="places"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+    </div>
+    <div class="row">
+      <label for="ch">Départ le matin<select id="ch" name="matin"><option>6h00</option><option>6h15</option><option selected>6h30</option><option>6h45</option><option>7h00</option><option>7h15</option><option>7h30</option><option>pas le matin</option></select></label>
+      <label for="cr">Retour le soir<select id="cr" name="soir"><option>pas le soir</option><option>17h00</option><option>17h30</option><option selected>18h00</option><option>18h30</option><option>19h00</option></select></label>
+    </div>
+    <label for="cq">Où tu passes (quartier, route)<input id="cq" name="lieu" placeholder="Ex. Cité Apix, autoroute à péage"></label>
+    <p class="err" id="e-conduis" role="alert"></p>
+    <button class="btn btn-ink" type="submit">🚗 Proposer mes places sur WhatsApp</button>
+    <p class="note">Avant ton premier trajet, JÀPP vérifie ta pièce d'identité, ton permis et ta carte grise, en face à face ou en photo sur WhatsApp. Rien n'est demandé sur ce site.</p>
+  </form>
+</section>
+
+<section id="p-securite" role="tabpanel" aria-labelledby="t-securite" hidden>
+  <h2>La sécurité d'abord</h2>
+  <p class="lead">Monter avec quelqu'un qu'on ne connaît pas, ça se prépare. Voici nos règles.</p>
+  <ul class="rules">
+    <li><b>✅ Conducteurs vérifiés</b>Pièce d'identité, permis et carte grise contrôlés par JÀPP avant le premier trajet.</li>
+    <li><b>🚘 Tu connais la voiture avant de monter</b>On t'envoie le prénom du conducteur, la couleur, la marque et la plaque. Si ce n'est pas la même voiture, tu ne montes pas.</li>
+    <li><b>📍 Partage ton trajet</b>Envoie ta position en direct sur WhatsApp à un proche pendant le trajet.</li>
+    <li><b>⭐ Avis après chaque trajet</b>Passagers et conducteurs donnent leur avis. Un signalement grave et la personne quitte JÀPP.</li>
+    <li><b>💵 Prix fixé à l'avance</b>Pas de discussion dans la voiture : le prix de la place est connu avant la réservation.</li>
+    <li><b>🆘 En cas de problème</b>Écris tout de suite à JÀPP sur WhatsApp au <b style="display:inline">76 888 80 00</b>. En cas d'urgence, appelle la police au 17.</li>
+  </ul>
+  <div class="install">
+    <h2>Mets JÀPP sur ton téléphone</h2>
+    <p class="lead">Dans Chrome, touche le menu ⋮ puis « Ajouter à l'écran d'accueil ». JÀPP s'ouvre ensuite comme une application.</p>
+    <button class="btn btn-ink" id="b-install" type="button" hidden>📲 Installer JÀPP</button>
+  </div>
+</section>
+
+</main>
+<footer class="wrap"><p>JÀPP · Covoiturage Tivaouane Peulh ⇄ Plateau · Phase de test · WhatsApp 76 888 80 00</p></footer>
+
+<script>
+(function(){
+  var WA='221768888000';
+  function wa(msg){window.location.href='https://wa.me/'+WA+'?text='+encodeURIComponent(msg);}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  // Tabs
+  var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+  function show(id){
+    tabs.forEach(function(t){var on=t.id==='t-'+id;t.setAttribute('aria-selected',on);document.getElementById(t.getAttribute('aria-controls')).hidden=!on;});
+    try{history.replaceState(null,'','#'+id);}catch(e){}
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){show(t.id.slice(2));});});
+  var h=(location.hash||'').slice(1); if(['trajets','place','conduis','securite'].indexOf(h)>=0) show(h);
+
+  // Trips
+  var box=document.getElementById('trips');
+  function emptyState(){
+    box.innerHTML='<div class="empty"><strong>Les premiers conducteurs sont en cours de vérification.</strong>'
+      +'<span class="meta">Laisse ta demande dans « Je cherche une place » : on te prévient sur WhatsApp dès qu\'une voiture fait ton trajet.</span>'
+      +'<div style="margin-top:12px"><button class="btn btn-wa" type="button" id="b-go">Je cherche une place</button></div></div>';
+    document.getElementById('b-go').addEventListener('click',function(){show('place');});
+  }
+  fetch('assets/japp/trajets.json',{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
+    var list=(d&&d.trajets)||[];
+    if(!list.length){emptyState();return;}
+    box.innerHTML=list.map(function(t){
+      var libres=Math.max(0,(t.places||0)-(t.reservees||0));
+      return '<article class="trip">'
+        +'<div class="trip-top"><span class="time">'+esc(t.heure)+'</span><span class="price">'+esc(Number(t.prix).toLocaleString('fr-FR'))+' F / place</span></div>'
+        +'<div><b>'+esc(t.depart)+' → '+esc(t.arrivee)+'</b></div>'
+        +'<div class="meta">'+esc(t.jours)+' · '+esc(t.voiture)+' · RDV : '+esc(t.rdv)+'</div>'
+        +'<div class="trip-top"><span class="badge">✔ '+esc(t.conducteur)+' · vérifié</span><span class="seats">'+(libres?libres+' place'+(libres>1?'s':'')+' libre'+(libres>1?'s':''):'Complet')+'</span></div>'
+        +(libres?'<button class="btn btn-wa" type="button" data-id="'+esc(t.id)+'">Réserver une place</button>':'')
+        +'</article>';
+    }).join('');
+    box.querySelectorAll('button[data-id]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var t=list.filter(function(x){return x.id===b.dataset.id;})[0];
+        wa('Bonjour JÀPP, je veux réserver 1 place.\nTrajet '+t.id+' : '+t.depart+' → '+t.arrivee+' à '+t.heure+' ('+t.jours+').\nMon prénom : \nJours voulus : ');
+      });
+    });
+  }).catch(emptyState);
+
+  // Passenger form
+  document.getElementById('f-place').addEventListener('submit',function(ev){
+    ev.preventDefault(); var f=ev.target, err=document.getElementById('e-place');
+    var jours=[].slice.call(f.querySelectorAll('input[name=jour]:checked')).map(function(c){return c.value;});
+    if(!f.nom.value.trim()||!f.tel.value.trim()){err.textContent='Écris ton nom et ton numéro WhatsApp.';return;}
+    if(!jours.length){err.textContent='Choisis au moins un jour.';return;}
+    err.textContent='';
+    wa('Bonjour JÀPP, je cherche une place en covoiturage.\nNom : '+f.nom.value.trim()+'\nTéléphone : '+f.tel.value.trim()
+      +'\nSens : '+f.sens.value+'\nHeure : '+f.heure.value+'\nJours : '+jours.join(', ')
+      +(f.lieu.value.trim()?'\nDépart : '+f.lieu.value.trim():'')+(f.arrivee.value.trim()?'\nArrivée : '+f.arrivee.value.trim():''));
+  });
+
+  // Driver form
+  document.getElementById('f-conduis').addEventListener('submit',function(ev){
+    ev.preventDefault(); var f=ev.target, err=document.getElementById('e-conduis');
+    if(!f.nom.value.trim()||!f.tel.value.trim()||!f.voiture.value.trim()){err.textContent='Écris ton nom, ton numéro et ta voiture.';return;}
+    err.textContent='';
+    wa('Bonjour JÀPP, je fais le trajet en voiture et je propose mes places.\nNom : '+f.nom.value.trim()+'\nTéléphone : '+f.tel.value.trim()
+      +'\nVoiture : '+f.voiture.value.trim()+'\nPlaces libres : '+f.places.value+'\nDépart le matin : '+f.matin.value+'\nRetour le soir : '+f.soir.value
+      +(f.lieu.value.trim()?'\nJe passe par : '+f.lieu.value.trim():''));
+  });
+
+  // Install prompt (Android Chrome)
+  var deferred=null, bi=document.getElementById('b-install');
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;bi.hidden=false;});
+  bi.addEventListener('click',function(){if(deferred){deferred.prompt();deferred=null;bi.hidden=true;}});
+})();
+</script>
+</body>
+</html>
