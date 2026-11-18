@@ -70,6 +70,13 @@ legend{font-weight:600;font-size:.95em;margin-bottom:8px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips label{display:flex;flex-direction:row;align-items:center;gap:6px;font-weight:500;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
 .chips input{width:auto;margin:0}
+.ok{background:var(--bg);border:1.5px solid var(--ok);border-radius:12px;padding:14px;display:grid;gap:10px}
+.ok b{color:var(--ok)}
+.days{display:flex;flex-wrap:wrap;gap:6px}
+.days button{font:inherit;font-size:.86em;border:1.5px solid var(--line);background:var(--bg);color:var(--text);border-radius:999px;padding:6px 11px;cursor:pointer}
+.days button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.days button:disabled{opacity:.45;cursor:not-allowed;text-decoration:line-through}
+.resa{display:grid;gap:10px;border-top:1px dashed var(--line);padding-top:10px}
 .err{color:#C62828;font-weight:600;margin:0;min-height:1.2em}
 .note{color:var(--muted);font-size:.86em;margin:0}
 .rules{display:grid;gap:10px;padding:0;margin:0;list-style:none}
@@ -110,7 +117,7 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
   </div>
   <ol class="steps" style="margin-top:22px">
     <li><div><b>Choisis un trajet</b><br><span class="meta">Heure de départ, point de rendez-vous, prix par place.</span></div></li>
-    <li><div><b>Réserve sur WhatsApp</b><br><span class="meta">JÀPP confirme ta place et te donne le nom et la plaque du conducteur.</span></div></li>
+    <li><div><b>Réserve ta place</b><br><span class="meta">Choisis le jour et donne ton numéro d'inscrit. JÀPP t'envoie ensuite la voiture et la plaque du conducteur.</span></div></li>
     <li><div><b>Paie le conducteur</b><br><span class="meta">Par Wave ou Orange Money, à la montée.</span></div></li>
   </ol>
 </section>
@@ -136,9 +143,10 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
     <label for="pq">Point de départ (quartier, repère)<input id="pq" name="lieu" placeholder="Ex. rond-point Cité Apix"></label>
     <label for="pa">Point d'arrivée au Plateau<input id="pa" name="arrivee" placeholder="Ex. Place de l'Indépendance"></label>
     <p class="err" id="e-place" role="alert"></p>
-    <button class="btn btn-wa" type="submit">💬 Envoyer ma demande sur WhatsApp</button>
-    <p class="note">Avant ton premier trajet, JÀPP te demande ta pièce d'identité et ta filiation sur WhatsApp. Rien n'est demandé sur ce site.</p>
-    <p class="note">Le bouton ouvre WhatsApp avec ton message déjà écrit. Il part seulement quand tu appuies sur Envoyer. Le site ne garde aucune donnée.</p>
+    <input type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+    <button class="btn btn-wa" type="submit">✅ M'inscrire comme passager</button>
+    <div class="ok" id="o-place" hidden></div>
+    <p class="note">Avant ton premier trajet, JÀPP te demande ta pièce d'identité et ta filiation sur WhatsApp. Le site garde seulement ton nom, ton numéro et ton trajet, pour organiser les réservations.</p>
   </form>
 </section>
 
@@ -158,7 +166,9 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
     </div>
     <label for="cq">Où tu passes (quartier, route)<input id="cq" name="lieu" placeholder="Ex. Cité Apix, autoroute à péage"></label>
     <p class="err" id="e-conduis" role="alert"></p>
-    <button class="btn btn-ink" type="submit">🚗 Proposer mes places sur WhatsApp</button>
+    <input type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+    <button class="btn btn-ink" type="submit">🚗 M'inscrire comme conducteur</button>
+    <div class="ok" id="o-conduis" hidden></div>
     <p class="note">Avant ton premier trajet, JÀPP vérifie ta pièce d'identité, ton permis et ta carte grise, en face à face ou en photo sur WhatsApp. Rien n'est demandé sur ce site.</p>
   </form>
 </section>
@@ -187,9 +197,13 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
 
 <script>
 (function(){
+  var API='https://script.google.com/macros/s/AKfycbx53ikJxwArjEq8jQfGqz_WVsQX1j5r-p3PlnL62b9MBV9w3xXiP_0emDFA1cBZHNJO/exec';
   var WA='221768888000';
-  function wa(msg){window.location.href='https://wa.me/'+WA+'?text='+encodeURIComponent(msg);}
+  function waLink(msg){return 'https://wa.me/'+WA+'?text='+encodeURIComponent(msg);}
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function post(data){
+    return fetch(API,{method:'POST',body:JSON.stringify(data)}).then(function(r){return r.json();});
+  }
 
   // Tabs
   var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
@@ -201,54 +215,96 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
   var h=(location.hash||'').slice(1); if(['trajets','place','conduis','securite'].indexOf(h)>=0) show(h);
 
   // Trips
-  var box=document.getElementById('trips');
-  function emptyState(){
-    box.innerHTML='<div class="empty"><strong>Les premiers conducteurs sont en cours de vérification.</strong>'
-      +'<span class="meta">Laisse ta demande dans « Je cherche une place » : on te prévient sur WhatsApp dès qu\'une voiture fait ton trajet.</span>'
-      +'<div style="margin-top:12px"><button class="btn btn-wa" type="button" id="b-go">Je cherche une place</button></div></div>';
+  var box=document.getElementById('trips'), trips=[];
+  function emptyState(msg){
+    box.innerHTML='<div class="empty"><strong>'+(msg||'Les premiers conducteurs sont en cours de vérification.')+'</strong>'
+      +'<span class="meta">Inscris-toi dans l\'onglet « Passager » : dès qu\'une voiture vérifiée fait ton trajet, elle apparaît ici et tu peux réserver.</span>'
+      +'<div style="margin-top:12px"><button class="btn btn-wa" type="button" id="b-go">M\'inscrire comme passager</button></div></div>';
     document.getElementById('b-go').addEventListener('click',function(){show('place');});
   }
-  fetch('assets/japp/trajets.json',{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
-    var list=(d&&d.trajets)||[];
-    if(!list.length){emptyState();return;}
-    box.innerHTML=list.map(function(t){
-      var libres=Math.max(0,(t.places||0)-(t.reservees||0));
-      return '<article class="trip">'
-        +'<div class="trip-top"><span class="time">'+esc(t.heure)+'</span><span class="price">'+esc(Number(t.prix).toLocaleString('fr-FR'))+' F / place</span></div>'
+  function render(){
+    if(!trips.length){emptyState();return;}
+    box.innerHTML=trips.map(function(t,k){
+      var any=t.jours.some(function(d){return d.libres>0;});
+      return '<article class="trip" data-k="'+k+'">'
+        +'<div class="trip-top"><span class="time">'+esc(t.heure)+'</span><span class="price">'+Number(t.prix).toLocaleString('fr-FR')+' F / place</span></div>'
         +'<div><b>'+esc(t.depart)+' → '+esc(t.arrivee)+'</b></div>'
-        +'<div class="meta">'+esc(t.jours)+' · '+esc(t.voiture)+' · RDV : '+esc(t.rdv)+'</div>'
-        +'<div class="trip-top"><span class="badge">✔ '+esc(t.conducteur)+' · vérifié</span><span class="seats">'+(libres?libres+' place'+(libres>1?'s':'')+' libre'+(libres>1?'s':''):'Complet')+'</span></div>'
-        +(libres?'<button class="btn btn-wa" type="button" data-id="'+esc(t.id)+'">Réserver une place</button>':'')
+        +'<div class="meta">'+esc(t.voiture)+' · RDV : '+esc(t.rdv)+'</div>'
+        +'<div class="trip-top"><span class="badge">✔ '+esc(t.conducteur)+' · vérifié</span><span class="seats">'+t.places+' place'+(t.places>1?'s':'')+'</span></div>'
+        +(any?'<button class="btn btn-wa" type="button" data-open="'+k+'">Réserver une place</button>':'<div class="seats">Complet cette semaine</div>')
+        +'<form class="resa" data-k="'+k+'" hidden novalidate>'
+        +'<div class="meta">Choisis le jour :</div><div class="days">'
+        +t.jours.map(function(d){return '<button type="button" data-day="'+esc(d.key)+'" aria-pressed="false"'+(d.libres?'':' disabled')+'>'+esc(d.label)+(d.libres?' · '+d.libres:'')+'</button>';}).join('')
+        +'</div><label>Ton numéro WhatsApp (celui de ton inscription)<input name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="77 000 00 00"></label>'
+        +'<p class="err" role="alert"></p><button class="btn btn-ink" type="submit">Confirmer ma réservation</button></form>'
         +'</article>';
     }).join('');
-    box.querySelectorAll('button[data-id]').forEach(function(b){
-      b.addEventListener('click',function(){
-        var t=list.filter(function(x){return x.id===b.dataset.id;})[0];
-        wa('Bonjour JÀPP, je veux réserver 1 place.\nTrajet '+t.id+' : '+t.depart+' → '+t.arrivee+' à '+t.heure+' ('+t.jours+').\nMon prénom : \nJours voulus : ');
-      });
-    });
-  }).catch(emptyState);
+  }
+  box.addEventListener('click',function(ev){
+    var o=ev.target.closest('[data-open]');
+    if(o){var f=box.querySelector('form.resa[data-k="'+o.dataset.open+'"]');f.hidden=!f.hidden;return;}
+    var d=ev.target.closest('[data-day]');
+    if(d&&!d.disabled){[].forEach.call(d.parentNode.children,function(b){b.setAttribute('aria-pressed',b===d);});}
+  });
+  box.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var f=ev.target, t=trips[+f.dataset.k], err=f.querySelector('.err'), btn=f.querySelector('button[type=submit]');
+    var day=f.querySelector('[data-day][aria-pressed=true]');
+    if(!day){err.textContent='Choisis un jour.';return;}
+    if(f.tel.value.replace(/\D/g,'').length<9){err.textContent='Écris ton numéro WhatsApp complet.';return;}
+    err.textContent='';btn.disabled=true;btn.textContent='Réservation en cours…';
+    post({type:'reservation',trajet:t.id,jour:day.dataset.day,tel:f.tel.value}).then(function(r){
+      if(r.ok){
+        f.outerHTML='<div class="ok"><b>✅ Place réservée, '+esc(r.passager)+' !</b><span>'+esc(r.jour)+' à '+esc(r.heure)+' avec '+esc(r.conducteur)+' · '+Number(r.prix).toLocaleString('fr-FR')+' F à payer au conducteur. Réf. '+esc(r.ref)+'</span>'
+          +'<span class="meta">JÀPP t\'envoie la voiture et la plaque sur WhatsApp avant le départ.</span></div>';
+        load();return;
+      }
+      var M={inconnu:'Ce numéro n\'est pas inscrit. Inscris-toi d\'abord dans l\'onglet « Passager ».',
+        non_verifie:'Ton inscription n\'est pas encore vérifiée. JÀPP te contacte sur WhatsApp pour ta pièce d\'identité et ta filiation.',
+        complet:'Plus de place ce jour-là. Choisis un autre jour.',deja:'Tu as déjà une place sur ce trajet ce jour-là.',
+        ferme:'Les réservations sont fermées pour le moment.'};
+      err.textContent=M[r.code]||'La réservation n\'a pas marché. Réessaie dans un instant.';
+      btn.disabled=false;btn.textContent='Confirmer ma réservation';
+    }).catch(function(){err.textContent='Pas de connexion. Vérifie ton internet et réessaie.';btn.disabled=false;btn.textContent='Confirmer ma réservation';});
+  });
+  function load(){
+    fetch(API,{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
+      trips=(d&&d.trajets)||[]; render();
+    }).catch(function(){emptyState('Impossible de charger les trajets pour le moment.');});
+  }
+  load();
+
+  function done(el,html){el.innerHTML=html;el.hidden=false;el.scrollIntoView({block:'nearest'});}
 
   // Passenger form
   document.getElementById('f-place').addEventListener('submit',function(ev){
-    ev.preventDefault(); var f=ev.target, err=document.getElementById('e-place');
+    ev.preventDefault(); var f=ev.target, err=document.getElementById('e-place'), btn=f.querySelector('button[type=submit]');
     var jours=[].slice.call(f.querySelectorAll('input[name=jour]:checked')).map(function(c){return c.value;});
-    if(!f.nom.value.trim()||!f.tel.value.trim()){err.textContent='Écris ton nom et ton numéro WhatsApp.';return;}
+    if(!f.nom.value.trim()||f.tel.value.replace(/\D/g,'').length<9){err.textContent='Écris ton nom et ton numéro WhatsApp complet.';return;}
     if(!jours.length){err.textContent='Choisis au moins un jour.';return;}
-    err.textContent='';
-    wa('Bonjour JÀPP (SECOTRAMI), je cherche une place en covoiturage.\nNom : '+f.nom.value.trim()+'\nTéléphone : '+f.tel.value.trim()
-      +'\nSens : '+f.sens.value+'\nHeure : '+f.heure.value+'\nJours : '+jours.join(', ')
-      +(f.lieu.value.trim()?'\nDépart : '+f.lieu.value.trim():'')+(f.arrivee.value.trim()?'\nArrivée : '+f.arrivee.value.trim():''));
+    err.textContent='';btn.disabled=true;
+    var data={type:'passager',site:f.site.value,nom:f.nom.value,tel:f.tel.value,sens:f.sens.value,heure:f.heure.value,jours:jours.join(', '),lieu:f.lieu.value,arrivee:f.arrivee.value};
+    post(data).then(function(r){
+      btn.disabled=false;
+      if(!r.ok){err.textContent='Vérifie ton nom et ton numéro, puis réessaie.';return;}
+      done(document.getElementById('o-place'),'<b>✅ Inscription reçue (n° '+esc(r.id)+')</b><span>Dernière étape : envoie ta pièce d\'identité et ta filiation à JÀPP sur WhatsApp. Dès que c\'est vérifié, tu peux réserver.</span>'
+        +'<a class="btn btn-wa" style="text-align:center;text-decoration:none" href="'+waLink('Bonjour JÀPP (SECOTRAMI), je viens de m\'inscrire comme passager (n° '+r.id+'). Voici ma pièce d\'identité et ma filiation :')+'">💬 Envoyer mes pièces sur WhatsApp</a>');
+      f.reset();
+    }).catch(function(){btn.disabled=false;err.textContent='Pas de connexion. Vérifie ton internet et réessaie.';});
   });
 
   // Driver form
   document.getElementById('f-conduis').addEventListener('submit',function(ev){
-    ev.preventDefault(); var f=ev.target, err=document.getElementById('e-conduis');
-    if(!f.nom.value.trim()||!f.tel.value.trim()||!f.voiture.value.trim()){err.textContent='Écris ton nom, ton numéro et ta voiture.';return;}
-    err.textContent='';
-    wa('Bonjour JÀPP, je fais le trajet en voiture et je propose mes places.\nNom : '+f.nom.value.trim()+'\nTéléphone : '+f.tel.value.trim()
-      +'\nVoiture : '+f.voiture.value.trim()+'\nPlaces libres : '+f.places.value+'\nDépart le matin : '+f.matin.value+'\nRetour le soir : '+f.soir.value
-      +(f.lieu.value.trim()?'\nJe passe par : '+f.lieu.value.trim():''));
+    ev.preventDefault(); var f=ev.target, err=document.getElementById('e-conduis'), btn=f.querySelector('button[type=submit]');
+    if(!f.nom.value.trim()||f.tel.value.replace(/\D/g,'').length<9||!f.voiture.value.trim()){err.textContent='Écris ton nom, ton numéro complet et ta voiture.';return;}
+    err.textContent='';btn.disabled=true;
+    post({type:'conducteur',site:f.site.value,nom:f.nom.value,tel:f.tel.value,voiture:f.voiture.value,places:f.places.value,matin:f.matin.value,soir:f.soir.value,lieu:f.lieu.value}).then(function(r){
+      btn.disabled=false;
+      if(!r.ok){err.textContent='Vérifie les champs, puis réessaie.';return;}
+      done(document.getElementById('o-conduis'),'<b>✅ Inscription reçue (n° '+esc(r.id)+')</b><span>Dernière étape : envoie ta pièce d\'identité, ton permis et ta carte grise à JÀPP sur WhatsApp. Dès que c\'est vérifié, tes trajets apparaissent dans l\'application.</span>'
+        +'<a class="btn btn-ink" style="text-align:center;text-decoration:none" href="'+waLink('Bonjour JÀPP (SECOTRAMI), je viens de m\'inscrire comme conducteur (n° '+r.id+'). Voici ma pièce d\'identité, mon permis et ma carte grise :')+'">💬 Envoyer mes papiers sur WhatsApp</a>');
+      f.reset();
+    }).catch(function(){btn.disabled=false;err.textContent='Pas de connexion. Vérifie ton internet et réessaie.';});
   });
 
   // Install prompt (Android Chrome)
