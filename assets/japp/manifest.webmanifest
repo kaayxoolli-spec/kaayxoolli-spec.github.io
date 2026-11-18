@@ -2,7 +2,7 @@
   "id": "/japp.html",
   "name": "JÀPP Covoiturage",
   "short_name": "JÀPP",
-  "description": "Covoiturage vérifié entre Tivaouane Peulh (Cité Apix) et le Plateau. Un service SECOTRAMI.",
+  "description": "Covoiturage vérifié partout au Sénégal. Un service SECOTRAMI.",
   "start_url": "/japp.html",
   "scope": "/",
   "display": "standalone",

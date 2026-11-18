@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>JÀPP Covoiturage</title>
-<meta name="description" content="JÀPP, un service SECOTRAMI : covoiturage vérifié entre Tivaouane Peulh (Cité Apix) et le Plateau. Réserve une place dans une voiture qui fait déjà le trajet, ou propose tes places vides.">
+<meta name="description" content="JÀPP, un service SECOTRAMI : covoiturage vérifié partout au Sénégal. Réserve une place dans une voiture qui fait déjà le trajet, ou propose tes places vides.">
 <link rel="canonical" href="https://kaayxoolli-spec.github.io/japp.html">
 <meta property="og:title" content="JÀPP Covoiturage">
-<meta property="og:description" content="Tivaouane Peulh → Plateau, en voiture, avec des conducteurs vérifiés.">
+<meta property="og:description" content="Covoiturage partout au Sénégal, avec des conducteurs vérifiés.">
 <meta property="og:image" content="https://kaayxoolli-spec.github.io/assets/japp/icon.png">
 <meta name="theme-color" content="#0E2A47">
 <link rel="manifest" href="/assets/japp/manifest.webmanifest">
@@ -70,6 +70,7 @@ legend{font-weight:600;font-size:.95em;margin-bottom:8px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips label{display:flex;flex-direction:row;align-items:center;gap:6px;font-weight:500;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
 .chips input{width:auto;margin:0}
+.filtre{margin-bottom:14px}
 .ok{background:var(--bg);border:1.5px solid var(--ok);border-radius:12px;padding:14px;display:grid;gap:10px}
 .ok b{color:var(--ok)}
 .days{display:flex;flex-wrap:wrap;gap:6px}
@@ -95,8 +96,8 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
 <header>
   <div class="wrap">
     <div class="brand"><div class="logo">JÀPP<span></span></div><div class="by">un service<br><b>SECOTRAMI</b></div></div>
-    <div class="route"><span class="stop">Tivaouane Peulh · Cité Apix</span><span class="arrow">⇄</span><span class="stop">Plateau</span></div>
-    <p class="pitch">Des voitures font déjà ce trajet chaque matin avec des places vides. Réserve une place chez un conducteur vérifié et partage les frais.</p>
+    <div class="route"><span class="stop">En ville</span><span class="arrow">·</span><span class="stop">Entre les régions</span><span class="arrow">·</span><span class="stop">Partout au Sénégal</span></div>
+    <p class="pitch">Chaque jour, des voitures roulent avec des places vides : pour aller au travail, en ville ou dans une autre région. Réserve une place chez un conducteur vérifié et partagez les frais.</p>
   </div>
 </header>
 <nav aria-label="Sections">
@@ -110,8 +111,12 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
 <main class="wrap">
 
 <section id="p-trajets" role="tabpanel" aria-labelledby="t-trajets">
-  <h2>Trajets de la semaine</h2>
+  <h2>Trajets des 7 prochains jours</h2>
   <p class="lead">Chaque conducteur a été vérifié par JÀPP (pièce d'identité, carte grise, plaque).</p>
+  <div class="row filtre">
+    <label for="fd">Je pars de<input id="fd" list="lieux" placeholder="Ex. Keur Massar" autocomplete="off"></label>
+    <label for="fa">Je vais à<input id="fa" list="lieux" placeholder="Ex. Dakar Plateau" autocomplete="off"></label>
+  </div>
   <div id="trips" class="trips">
     <div class="empty"><strong>Chargement des trajets…</strong></div>
   </div>
@@ -129,8 +134,12 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
     <label for="pn">Prénom et nom<input id="pn" name="nom" autocomplete="name" required></label>
     <label for="pt">Téléphone WhatsApp<input id="pt" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="77 000 00 00" required></label>
     <div class="row">
-      <label for="ps">Sens<select id="ps" name="sens"><option>Tivaouane Peulh → Plateau</option><option>Plateau → Tivaouane Peulh</option><option>Aller et retour</option></select></label>
-      <label for="ph">Heure de départ<select id="ph" name="heure"><option>6h00 – 6h30</option><option selected>6h30 – 7h00</option><option>7h00 – 7h30</option><option>7h30 – 8h00</option><option>17h00 – 17h30</option><option>17h30 – 18h00</option><option>18h00 – 18h30</option><option>18h30 – 19h00</option></select></label>
+      <label for="pd">Je pars de<input id="pd" name="depart" list="lieux" placeholder="Ville ou quartier" required></label>
+      <label for="pv">Je vais à<input id="pv" name="dest" list="lieux" placeholder="Ville ou quartier" required></label>
+    </div>
+    <div class="row">
+      <label for="ph">Heure de départ<select id="ph" name="heure"><option>tôt le matin (5h – 7h)</option><option selected>le matin (7h – 10h)</option><option>en journée (10h – 16h)</option><option>le soir (16h – 20h)</option><option>la nuit (après 20h)</option><option>peu importe</option></select></label>
+      <label for="pr">Retour<select id="pr" name="retour"><option>aller simple</option><option>aller et retour le même jour</option><option>retour un autre jour</option></select></label>
     </div>
     <fieldset><legend>Quels jours ?</legend><div class="chips" id="pj">
       <label><input type="checkbox" name="jour" value="lundi" checked> Lun</label>
@@ -139,9 +148,10 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
       <label><input type="checkbox" name="jour" value="jeudi" checked> Jeu</label>
       <label><input type="checkbox" name="jour" value="vendredi" checked> Ven</label>
       <label><input type="checkbox" name="jour" value="samedi"> Sam</label>
+      <label><input type="checkbox" name="jour" value="dimanche"> Dim</label>
     </div></fieldset>
-    <label for="pq">Point de départ (quartier, repère)<input id="pq" name="lieu" placeholder="Ex. rond-point Cité Apix"></label>
-    <label for="pa">Point d'arrivée au Plateau<input id="pa" name="arrivee" placeholder="Ex. Place de l'Indépendance"></label>
+    <label for="pq">Point de départ précis (repère)<input id="pq" name="lieu" placeholder="Ex. rond-point, station, marché"></label>
+    <label for="pa">Point d'arrivée précis (repère)<input id="pa" name="arrivee" placeholder="Ex. gare routière, lieu de travail"></label>
     <p class="err" id="e-place" role="alert"></p>
     <input type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
     <button class="btn btn-wa" type="submit">✅ M'inscrire comme passager</button>
@@ -152,7 +162,7 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
 
 <section id="p-conduis" role="tabpanel" aria-labelledby="t-conduis" hidden>
   <h2>Je conduis : je propose mes places</h2>
-  <p class="lead">Tu fais déjà le trajet ? Prends 1 à 3 passagers vérifiés du quartier et partage tes frais d'essence et de péage.</p>
+  <p class="lead">Tu fais déjà le trajet, en ville ou vers une autre région ? Prends 1 à 4 passagers vérifiés et partage tes frais d'essence et de péage.</p>
   <form id="f-conduis" novalidate>
     <label for="cn">Prénom et nom<input id="cn" name="nom" autocomplete="name" required></label>
     <label for="ct">Téléphone WhatsApp<input id="ct" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="77 000 00 00" required></label>
@@ -161,10 +171,15 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
       <label for="cp">Places libres<select id="cp" name="places"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
     </div>
     <div class="row">
-      <label for="ch">Départ le matin<select id="ch" name="matin"><option>6h00</option><option>6h15</option><option selected>6h30</option><option>6h45</option><option>7h00</option><option>7h15</option><option>7h30</option><option>pas le matin</option></select></label>
-      <label for="cr">Retour le soir<select id="cr" name="soir"><option>pas le soir</option><option>17h00</option><option>17h30</option><option selected>18h00</option><option>18h30</option><option>19h00</option></select></label>
+      <label for="cd">Je pars de<input id="cd" name="depart" list="lieux" placeholder="Ville ou quartier" required></label>
+      <label for="cv2">Je vais à<input id="cv2" name="dest" list="lieux" placeholder="Ville ou quartier" required></label>
     </div>
-    <label for="cq">Où tu passes (quartier, route)<input id="cq" name="lieu" placeholder="Ex. Cité Apix, autoroute à péage"></label>
+    <div class="row">
+      <label for="ch">Heure de départ (aller)<select id="ch" name="matin"><option>5h00</option><option>5h30</option><option>6h00</option><option selected>6h30</option><option>7h00</option><option>7h30</option><option>8h00</option><option>8h30</option><option>9h00</option><option>9h30</option><option>10h00</option><option>10h30</option><option>11h00</option><option>11h30</option><option>12h00</option><option>12h30</option><option>13h00</option><option>13h30</option><option>14h00</option><option>14h30</option><option>15h00</option><option>15h30</option><option>16h00</option><option>16h30</option><option>17h00</option><option>17h30</option><option>18h00</option><option>18h30</option><option>19h00</option><option>19h30</option><option>20h00</option><option>20h30</option><option>21h00</option><option>21h30</option><option>22h00</option><option>22h30</option></select></label>
+      <label for="cr">Heure du retour<select id="cr" name="soir"><option>pas de retour</option><option>5h00</option><option>5h30</option><option>6h00</option><option>6h30</option><option>7h00</option><option>7h30</option><option>8h00</option><option>8h30</option><option>9h00</option><option>9h30</option><option>10h00</option><option>10h30</option><option>11h00</option><option>11h30</option><option>12h00</option><option>12h30</option><option>13h00</option><option>13h30</option><option>14h00</option><option>14h30</option><option>15h00</option><option>15h30</option><option>16h00</option><option>16h30</option><option>17h00</option><option>17h30</option><option selected>18h00</option><option>18h30</option><option>19h00</option><option>19h30</option><option>20h00</option><option>20h30</option><option>21h00</option><option>21h30</option><option>22h00</option><option>22h30</option></select></label>
+    </div>
+    <fieldset><legend>Quels jours ?</legend><div class="chips"><label><input type="checkbox" name="cjour" value="lundi" checked> Lun</label><label><input type="checkbox" name="cjour" value="mardi" checked> Mar</label><label><input type="checkbox" name="cjour" value="mercredi" checked> Mer</label><label><input type="checkbox" name="cjour" value="jeudi" checked> Jeu</label><label><input type="checkbox" name="cjour" value="vendredi" checked> Ven</label><label><input type="checkbox" name="cjour" value="samedi"> Sam</label><label><input type="checkbox" name="cjour" value="dimanche"> Dim</label></div></fieldset>
+    <label for="cq">Par où tu passes (route, quartiers)<input id="cq" name="lieu" placeholder="Ex. autoroute à péage, Rufisque"></label>
     <p class="err" id="e-conduis" role="alert"></p>
     <input type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
     <button class="btn btn-ink" type="submit">🚗 M'inscrire comme conducteur</button>
@@ -193,7 +208,8 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
 </section>
 
 </main>
-<footer class="wrap"><p>JÀPP, un service SECOTRAMI · Covoiturage Tivaouane Peulh ⇄ Plateau · Phase de test · WhatsApp 76 888 80 00 · <a href="/japp-confidentialite.html">Confidentialité</a></p></footer>
+<datalist id="lieux"><option value="Dakar Plateau"><option value="Médina"><option value="Fann – Point E"><option value="Mermoz – Sacré-Cœur"><option value="Liberté"><option value="Grand Yoff"><option value="HLM"><option value="Parcelles Assainies"><option value="Ouakam"><option value="Ngor – Almadies"><option value="Yoff"><option value="Patte d'Oie"><option value="Pikine"><option value="Guédiawaye"><option value="Thiaroye"><option value="Keur Massar"><option value="Malika"><option value="Tivaouane Peulh – Cité Apix"><option value="Keur Mbaye Fall"><option value="Mbao"><option value="Rufisque"><option value="Bargny"><option value="Sangalkam"><option value="Bambilor – Lac Rose"><option value="Diamniadio"><option value="Sébikotane"><option value="AIBD (aéroport)"><option value="Thiès"><option value="Mbour"><option value="Saly"><option value="Somone"><option value="Popenguine"><option value="Joal-Fadiouth"><option value="Tivaouane"><option value="Mboro"><option value="Louga"><option value="Saint-Louis"><option value="Richard-Toll"><option value="Podor"><option value="Matam"><option value="Touba"><option value="Mbacké"><option value="Diourbel"><option value="Bambey"><option value="Kaolack"><option value="Fatick"><option value="Foundiougne"><option value="Kaffrine"><option value="Tambacounda"><option value="Kédougou"><option value="Kolda"><option value="Sédhiou"><option value="Ziguinchor"><option value="Cap Skirring"><option value="Bignona"></datalist>
+<footer class="wrap"><p>JÀPP, un service SECOTRAMI · Covoiturage partout au Sénégal · Phase de test · WhatsApp 76 888 80 00 · <a href="/japp-confidentialite.html">Confidentialité</a></p></footer>
 
 <script>
 (function(){
@@ -224,12 +240,15 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
   }
   function render(){
     if(!trips.length){emptyState();return;}
-    box.innerHTML=trips.map(function(t,k){
+    var fd=norm(document.getElementById('fd').value), fa=norm(document.getElementById('fa').value);
+    var shown=trips.map(function(t,k){return [t,k];}).filter(function(x){return (!fd||norm(x[0].depart).indexOf(fd)>=0)&&(!fa||norm(x[0].arrivee).indexOf(fa)>=0);});
+    if(!shown.length){box.innerHTML='<div class="empty"><strong>Pas encore de voiture sur ce trajet.</strong><span class="meta">Inscris-toi dans l\'onglet « Passager » avec ce trajet : JÀPP cherche un conducteur et te prévient.</span></div>';return;}
+    box.innerHTML=shown.map(function(x){var t=x[0],k=x[1];
       var any=t.jours.some(function(d){return d.libres>0;});
       return '<article class="trip" data-k="'+k+'">'
         +'<div class="trip-top"><span class="time">'+esc(t.heure)+'</span><span class="price">'+Number(t.prix).toLocaleString('fr-FR')+' F / place</span></div>'
         +'<div><b>'+esc(t.depart)+' → '+esc(t.arrivee)+'</b></div>'
-        +'<div class="meta">'+esc(t.voiture)+' · RDV : '+esc(t.rdv)+'</div>'
+        +'<div class="meta">'+esc(t.voiture)+' · RDV : '+esc(t.rdv)+' · '+t.jours.length+' jour'+(t.jours.length>1?'s':'')+' cette semaine</div>'
         +'<div class="trip-top"><span class="badge">✔ '+esc(t.conducteur)+' · vérifié</span><span class="seats">'+t.places+' place'+(t.places>1?'s':'')+'</span></div>'
         +(any?'<button class="btn btn-wa" type="button" data-open="'+k+'">Réserver une place</button>':'<div class="seats">Complet cette semaine</div>')
         +'<form class="resa" data-k="'+k+'" hidden novalidate>'
@@ -267,6 +286,8 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
       btn.disabled=false;btn.textContent='Confirmer ma réservation';
     }).catch(function(){err.textContent='Pas de connexion. Vérifie ton internet et réessaie.';btn.disabled=false;btn.textContent='Confirmer ma réservation';});
   });
+  function norm(v){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
+  ['fd','fa'].forEach(function(id){document.getElementById(id).addEventListener('input',render);});
   function load(){
     fetch(API,{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
       trips=(d&&d.trajets)||[]; render();
@@ -281,9 +302,10 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
     ev.preventDefault(); var f=ev.target, err=document.getElementById('e-place'), btn=f.querySelector('button[type=submit]');
     var jours=[].slice.call(f.querySelectorAll('input[name=jour]:checked')).map(function(c){return c.value;});
     if(!f.nom.value.trim()||f.tel.value.replace(/\D/g,'').length<9){err.textContent='Écris ton nom et ton numéro WhatsApp complet.';return;}
+    if(!f.depart.value.trim()||!f.dest.value.trim()){err.textContent='Écris d\'où tu pars et où tu vas.';return;}
     if(!jours.length){err.textContent='Choisis au moins un jour.';return;}
     err.textContent='';btn.disabled=true;
-    var data={type:'passager',site:f.site.value,nom:f.nom.value,tel:f.tel.value,sens:f.sens.value,heure:f.heure.value,jours:jours.join(', '),lieu:f.lieu.value,arrivee:f.arrivee.value};
+    var data={type:'passager',site:f.site.value,nom:f.nom.value,tel:f.tel.value,sens:f.depart.value.trim()+' → '+f.dest.value.trim()+' ('+f.retour.value+')',heure:f.heure.value,jours:jours.join(', '),lieu:f.lieu.value,arrivee:f.arrivee.value};
     post(data).then(function(r){
       btn.disabled=false;
       if(!r.ok){err.textContent='Vérifie ton nom et ton numéro, puis réessaie.';return;}
@@ -296,9 +318,12 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
   // Driver form
   document.getElementById('f-conduis').addEventListener('submit',function(ev){
     ev.preventDefault(); var f=ev.target, err=document.getElementById('e-conduis'), btn=f.querySelector('button[type=submit]');
+    var cj=[].slice.call(f.querySelectorAll('input[name=cjour]:checked')).map(function(c){return c.value;});
     if(!f.nom.value.trim()||f.tel.value.replace(/\D/g,'').length<9||!f.voiture.value.trim()){err.textContent='Écris ton nom, ton numéro complet et ta voiture.';return;}
+    if(!f.depart.value.trim()||!f.dest.value.trim()){err.textContent='Écris d\'où tu pars et où tu vas.';return;}
+    if(!cj.length){err.textContent='Choisis au moins un jour.';return;}
     err.textContent='';btn.disabled=true;
-    post({type:'conducteur',site:f.site.value,nom:f.nom.value,tel:f.tel.value,voiture:f.voiture.value,places:f.places.value,matin:f.matin.value,soir:f.soir.value,lieu:f.lieu.value}).then(function(r){
+    post({type:'conducteur',site:f.site.value,nom:f.nom.value,tel:f.tel.value,voiture:f.voiture.value,places:f.places.value,matin:f.matin.value,soir:f.soir.value,lieu:f.lieu.value,depart:f.depart.value,dest:f.dest.value,jours:cj.join(', ')}).then(function(r){
       btn.disabled=false;
       if(!r.ok){err.textContent='Vérifie les champs, puis réessaie.';return;}
       done(document.getElementById('o-conduis'),'<b>✅ Inscription reçue (n° '+esc(r.id)+')</b><span>Dernière étape : envoie ta pièce d\'identité, ton permis et ta carte grise à JÀPP sur WhatsApp. Dès que c\'est vérifié, tes trajets apparaissent dans l\'application.</span>'
