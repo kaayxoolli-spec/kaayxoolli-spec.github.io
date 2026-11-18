@@ -10,7 +10,7 @@
 <meta property="og:description" content="Tivaouane Peulh → Plateau, en voiture, avec des conducteurs vérifiés.">
 <meta property="og:image" content="https://kaayxoolli-spec.github.io/assets/japp/icon.png">
 <meta name="theme-color" content="#0E2A47">
-<link rel="manifest" href="assets/japp/manifest.webmanifest">
+<link rel="manifest" href="/assets/japp/manifest.webmanifest">
 <link rel="icon" href="assets/japp/icon.png">
 <link rel="apple-touch-icon" href="assets/japp/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -193,7 +193,7 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
 </section>
 
 </main>
-<footer class="wrap"><p>JÀPP, un service SECOTRAMI · Covoiturage Tivaouane Peulh ⇄ Plateau · Phase de test · WhatsApp 76 888 80 00</p></footer>
+<footer class="wrap"><p>JÀPP, un service SECOTRAMI · Covoiturage Tivaouane Peulh ⇄ Plateau · Phase de test · WhatsApp 76 888 80 00 · <a href="/japp-confidentialite.html">Confidentialité</a></p></footer>
 
 <script>
 (function(){
@@ -306,6 +306,9 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
       f.reset();
     }).catch(function(){btn.disabled=false;err.textContent='Pas de connexion. Vérifie ton internet et réessaie.';});
   });
+
+  // Mode application (hors connexion)
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('/japp-sw.js').catch(function(){});}
 
   // Install prompt (Android Chrome)
   var deferred=null, bi=document.getElementById('b-install');

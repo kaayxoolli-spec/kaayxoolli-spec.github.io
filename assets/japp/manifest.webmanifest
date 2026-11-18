@@ -1,1 +1,25 @@
-{"name":"JÀPP Covoiturage","short_name":"JÀPP","start_url":"../../japp.html","scope":"../../","display":"standalone","background_color":"#0E2A47","theme_color":"#0E2A47","lang":"fr","icons":[{"src":"icon.png","sizes":"512x512","type":"image/png"}]}
+{
+  "id": "/japp.html",
+  "name": "JÀPP Covoiturage",
+  "short_name": "JÀPP",
+  "description": "Covoiturage vérifié entre Tivaouane Peulh (Cité Apix) et le Plateau. Un service SECOTRAMI.",
+  "start_url": "/japp.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0E2A47",
+  "theme_color": "#0E2A47",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["travel", "transportation"],
+  "icons": [
+    {"src": "/assets/japp/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/assets/japp/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "/assets/japp/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "screenshots": [
+    {"src": "/assets/japp/screen-1.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Trajets vérifiés"},
+    {"src": "/assets/japp/screen-2.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Inscription passager"},
+    {"src": "/assets/japp/screen-3.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Règles de sécurité"}
+  ]
+}
