@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>JÀPP Covoiturage</title>
-<meta name="description" content="JÀPP : covoiturage vérifié entre Tivaouane Peulh (Cité Apix) et le Plateau. Réserve une place dans une voiture qui fait déjà le trajet, ou propose tes places vides.">
+<meta name="description" content="JÀPP, un service SECOTRAMI : covoiturage vérifié entre Tivaouane Peulh (Cité Apix) et le Plateau. Réserve une place dans une voiture qui fait déjà le trajet, ou propose tes places vides.">
 <link rel="canonical" href="https://kaayxoolli-spec.github.io/japp.html">
 <meta property="og:title" content="JÀPP Covoiturage">
 <meta property="og:description" content="Tivaouane Peulh → Plateau, en voiture, avec des conducteurs vérifiés.">
@@ -33,6 +33,7 @@ header{background:var(--ink);color:#fff;padding-top:env(safe-area-inset-top,0px)
 header .wrap{padding-block:22px 18px}
 .brand{display:flex;align-items:center;gap:12px}
 .logo{font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:.5px;line-height:1}
+.by{font-size:.78em;line-height:1.25;color:#D3DCE8;border-left:2px solid var(--sign);padding-left:12px}.by b{color:#fff;letter-spacing:.06em}
 .logo span{display:block;height:6px;background:var(--sign);border-radius:3px;margin-top:6px}
 .route{margin:16px 0 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:600}
 .stop{background:#fff;color:var(--ink);border-radius:8px;padding:6px 10px;font-size:.92em}
@@ -86,7 +87,7 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
 <body>
 <header>
   <div class="wrap">
-    <div class="brand"><div class="logo">JÀPP<span></span></div></div>
+    <div class="brand"><div class="logo">JÀPP<span></span></div><div class="by">un service<br><b>SECOTRAMI</b></div></div>
     <div class="route"><span class="stop">Tivaouane Peulh · Cité Apix</span><span class="arrow">⇄</span><span class="stop">Plateau</span></div>
     <p class="pitch">Des voitures font déjà ce trajet chaque matin avec des places vides. Réserve une place chez un conducteur vérifié et partage les frais.</p>
   </div>
@@ -136,6 +137,7 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
     <label for="pa">Point d'arrivée au Plateau<input id="pa" name="arrivee" placeholder="Ex. Place de l'Indépendance"></label>
     <p class="err" id="e-place" role="alert"></p>
     <button class="btn btn-wa" type="submit">💬 Envoyer ma demande sur WhatsApp</button>
+    <p class="note">Avant ton premier trajet, JÀPP te demande ta pièce d'identité et ta filiation sur WhatsApp. Rien n'est demandé sur ce site.</p>
     <p class="note">Le bouton ouvre WhatsApp avec ton message déjà écrit. Il part seulement quand tu appuies sur Envoyer. Le site ne garde aucune donnée.</p>
   </form>
 </section>
@@ -166,6 +168,7 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
   <p class="lead">Monter avec quelqu'un qu'on ne connaît pas, ça se prépare. Voici nos règles.</p>
   <ul class="rules">
     <li><b>✅ Conducteurs vérifiés</b>Pièce d'identité, permis et carte grise contrôlés par JÀPP avant le premier trajet.</li>
+    <li><b>🪪 Passagers inscrits</b>Chaque passager donne sa pièce d'identité et sa filiation à JÀPP avant son premier trajet. Chacun sait avec qui il voyage.</li>
     <li><b>🚘 Tu connais la voiture avant de monter</b>On t'envoie le prénom du conducteur, la couleur, la marque et la plaque. Si ce n'est pas la même voiture, tu ne montes pas.</li>
     <li><b>📍 Partage ton trajet</b>Envoie ta position en direct sur WhatsApp à un proche pendant le trajet.</li>
     <li><b>⭐ Avis après chaque trajet</b>Passagers et conducteurs donnent leur avis. Un signalement grave et la personne quitte JÀPP.</li>
@@ -180,7 +183,7 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
 </section>
 
 </main>
-<footer class="wrap"><p>JÀPP · Covoiturage Tivaouane Peulh ⇄ Plateau · Phase de test · WhatsApp 76 888 80 00</p></footer>
+<footer class="wrap"><p>JÀPP, un service SECOTRAMI · Covoiturage Tivaouane Peulh ⇄ Plateau · Phase de test · WhatsApp 76 888 80 00</p></footer>
 
 <script>
 (function(){
@@ -233,7 +236,7 @@ footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
     if(!f.nom.value.trim()||!f.tel.value.trim()){err.textContent='Écris ton nom et ton numéro WhatsApp.';return;}
     if(!jours.length){err.textContent='Choisis au moins un jour.';return;}
     err.textContent='';
-    wa('Bonjour JÀPP, je cherche une place en covoiturage.\nNom : '+f.nom.value.trim()+'\nTéléphone : '+f.tel.value.trim()
+    wa('Bonjour JÀPP (SECOTRAMI), je cherche une place en covoiturage.\nNom : '+f.nom.value.trim()+'\nTéléphone : '+f.tel.value.trim()
       +'\nSens : '+f.sens.value+'\nHeure : '+f.heure.value+'\nJours : '+jours.join(', ')
       +(f.lieu.value.trim()?'\nDépart : '+f.lieu.value.trim():'')+(f.arrivee.value.trim()?'\nArrivée : '+f.arrivee.value.trim():''));
   });
