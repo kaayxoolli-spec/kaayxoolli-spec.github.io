@@ -7,7 +7,7 @@
 var SHEET_ID = '16F1aH6F15cjY4GmIuGYta7yUKnPhHmuCCMWpYvs7apU';
 var TABS = {
   cond: ['Date', 'ID', 'Prénom et nom', 'Téléphone', 'Voiture', 'Plaque', 'Places', 'Départ matin', 'Retour soir',
-         'Passe par', 'Vérifié', 'Actif', 'Point de RDV', 'Prix (F)', 'Notes'],
+         'Passe par', 'Vérifié', 'Actif', 'Point de RDV', 'Prix (F)', 'Notes', 'Départ (ville, quartier)', 'Destination', 'Jours'],
   pass: ['Date', 'ID', 'Prénom et nom', 'Téléphone', 'Sens', 'Heure', 'Jours', 'Départ', 'Arrivée', 'Vérifié', 'Notes'],
   resa: ['Date', 'Réf', 'Trajet', 'Jour du trajet', 'Heure', 'Sens', 'Conducteur', 'Passager', 'Téléphone',
          'Statut', 'Payé', 'Montant (F)', 'Part SECOTRAMI (F)']
@@ -89,14 +89,14 @@ function alert_(subject, body) {
 }
 function dayKey_(d) { return Utilities.formatDate(d, 'Africa/Dakar', 'yyyy-MM-dd'); }
 
-/** Prochains jours de trajet (lundi → samedi), 6 jours. */
+/** Prochains jours de trajet (7 jours, dimanche compris). */
 function nextDays_() {
   var out = [], d = new Date();
   var hour = Number(Utilities.formatDate(d, 'Africa/Dakar', 'H'));
   if (hour >= 20) d = new Date(d.getTime() + 864e5);
-  while (out.length < 6) {
+  while (out.length < 7) {
     var wd = Number(Utilities.formatDate(d, 'Africa/Dakar', 'u')) % 7; // 1=lundi … 7=dimanche → 0
-    if (wd !== 0) out.push({ key: dayKey_(d), label: JOURS[wd] + ' ' + Utilities.formatDate(d, 'Africa/Dakar', 'd/MM') });
+    out.push({ key: dayKey_(d), label: JOURS[wd] + ' ' + Utilities.formatDate(d, 'Africa/Dakar', 'd/MM') });
     d = new Date(d.getTime() + 864e5);
   }
   return out;
@@ -108,10 +108,12 @@ function trips_() {
   rows_(NAMES.cond).forEach(function (c) {
     if (c[10] !== true || c[11] !== true) return;
     var prenom = String(c[2]).split(' ')[0], prix = Number(c[13]) || prixDefaut, places = Number(c[6]) || 1;
-    if (c[7] && c[7] !== 'pas le matin') list.push({ id: c[1] + '-M', conducteur: prenom, voiture: c[4], places: places,
-      heure: c[7], sens: 'Tivaouane Peulh → Plateau', depart: 'Tivaouane Peulh', arrivee: 'Plateau', rdv: c[12] || c[9] || 'à confirmer', prix: prix });
-    if (c[8] && c[8] !== 'pas le soir') list.push({ id: c[1] + '-S', conducteur: prenom, voiture: c[4], places: places,
-      heure: c[8], sens: 'Plateau → Tivaouane Peulh', depart: 'Plateau', arrivee: 'Tivaouane Peulh', rdv: c[12] || 'à confirmer', prix: prix });
+    var dep = String(c[15] || 'Départ à confirmer'), arr = String(c[16] || 'Destination à confirmer');
+    var jd = String(c[17] || '').toLowerCase();
+    if (c[7] && c[7] !== 'pas le matin') list.push({ id: c[1] + '-M', jd: jd, conducteur: prenom, voiture: c[4], places: places,
+      heure: c[7], sens: dep + ' → ' + arr, depart: dep, arrivee: arr, rdv: c[12] || c[9] || 'à confirmer', prix: prix });
+    if (c[8] && c[8] !== 'pas de retour' && c[8] !== 'pas le soir') list.push({ id: c[1] + '-S', jd: jd, conducteur: prenom, voiture: c[4], places: places,
+      heure: c[8], sens: arr + ' → ' + dep, depart: arr, arrivee: dep, rdv: c[12] || 'à confirmer', prix: prix });
   });
   var taken = {};
   rows_(NAMES.resa).forEach(function (r) {
@@ -121,11 +123,12 @@ function trips_() {
   });
   var days = nextDays_();
   list.forEach(function (t) {
-    t.jours = days.map(function (d) {
+    t.jours = days.filter(function (d) { return !t.jd || t.jd.indexOf(d.label.split(' ')[0]) >= 0; }).map(function (d) {
       return { key: d.key, label: d.label, libres: Math.max(0, t.places - (taken[t.id + '|' + d.key] || 0)) };
     });
+    delete t.jd;
   });
-  return list;
+  return list.filter(function (t) { return t.jours.length; });
 }
 
 function doGet(e) {
@@ -151,8 +154,8 @@ function doPost(e) {
       if (!clean_(b.nom) || tel_(b.tel).length !== 9 || !clean_(b.voiture)) return out_({ ok: false, code: 'champs' });
       var cid = nextId_(NAMES.cond, 'C');
       append_(NAMES.cond, [now, cid, clean_(b.nom), tel_(b.tel), clean_(b.voiture), '',
-        Number(b.places) || 1, clean_(b.matin), clean_(b.soir), clean_(b.lieu), false, false, '', '', ''], [11, 12]);
-      alert_('nouveau conducteur ' + cid, clean_(b.nom) + ' – ' + tel_(b.tel) + '\n' + clean_(b.voiture) + ', ' + b.places + ' place(s)\nMatin ' + clean_(b.matin) + ' / soir ' + clean_(b.soir) + '\nÀ vérifier : pièce d\'identité, permis, carte grise, plaque.');
+        Number(b.places) || 1, clean_(b.matin), clean_(b.soir), clean_(b.lieu), false, false, '', '', '', clean_(b.depart, 60), clean_(b.dest, 60), clean_(b.jours, 80)], [11, 12]);
+      alert_('nouveau conducteur ' + cid, clean_(b.nom) + ' – ' + tel_(b.tel) + '\n' + clean_(b.depart) + ' → ' + clean_(b.dest) + '\n' + clean_(b.voiture) + ', ' + b.places + ' place(s)\nAller ' + clean_(b.matin) + ' / retour ' + clean_(b.soir) + ' (' + clean_(b.jours) + ')' + '\nÀ vérifier : pièce d\'identité, permis, carte grise, plaque.');
       return out_({ ok: true, id: cid });
     }
     if (b.type === 'reservation') {
@@ -182,4 +185,11 @@ function doPost(e) {
   } finally {
     try { lock.releaseLock(); } catch (e) {}
   }
+}
+
+/** Mise à jour des en-têtes (ajout Quartier de départ / Destination), sans toucher aux réglages. */
+function majColonnes() {
+  var sh = SpreadsheetApp.openById(SHEET_ID).getSheetByName(NAMES.cond);
+  sh.getRange(1, 1, 1, TABS.cond.length).setValues([TABS.cond]).setFontWeight('bold')
+    .setBackground('#0E2A47').setFontColor('#FFFFFF');
 }
