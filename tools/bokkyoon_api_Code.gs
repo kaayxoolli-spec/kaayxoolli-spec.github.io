@@ -193,3 +193,35 @@ function majColonnes() {
   sh.getRange(1, 1, 1, TABS.cond.length).setValues([TABS.cond]).setFontWeight('bold')
     .setBackground('#0E2A47').setFontColor('#FFFFFF');
 }
+
+/** Répare les formules du tableau de bord (séparateur ; pour une feuille en français) et met le titre. */
+function reparerTableau() {
+  var ss = SpreadsheetApp.openById(SHEET_ID), b = ss.getSheetByName(NAMES.bord);
+  b.getRange('A1').setValue('Bokk Yoon – Tableau de bord');
+  var f = [
+    '=MAX(0;COUNTA(Conducteurs!B2:B))',
+    '=COUNTIF(Conducteurs!K2:K;TRUE)',
+    '=COUNTIFS(Conducteurs!K2:K;TRUE;Conducteurs!L2:L;TRUE)',
+    '=MAX(0;COUNTA(Passagers!B2:B))',
+    '=COUNTIF(Passagers!J2:J;TRUE)',
+    '=COUNTIFS(Réservations!B2:B;"<>";Réservations!J2:J;"<>Annulé")',
+    '=COUNTIFS(Réservations!A2:A;">="&(TODAY()-WEEKDAY(TODAY();2)+1);Réservations!J2:J;"<>Annulé")',
+    '=COUNTIF(Réservations!J2:J;"Présent")',
+    '=COUNTIF(Réservations!J2:J;"Absent")',
+    '=SUMIFS(Réservations!L2:L;Réservations!K2:K;TRUE)',
+    '=SUMIFS(Réservations!M2:M;Réservations!K2:K;TRUE)',
+    '=SUMIFS(Réservations!L2:L;Réservations!K2:K;FALSE;Réservations!J2:J;"Présent")'
+  ];
+  var q = '=IFERROR(QUERY(Réservations!G2:L;"select G, count(G), sum(L) where G is not null and J <> \'Annulé\' group by G label G \'Conducteur\', count(G) \'Places\', sum(L) \'Montant (F)\'";0);"Aucune réservation")';
+  var out = [];
+  function put(range, semi) {
+    range.setFormula(semi); SpreadsheetApp.flush();
+    if (String(range.getDisplayValue()).indexOf('#ERROR') === 0) {
+      range.setFormula(semi.replace(/;(?=(?:[^"]*"[^"]*")*[^"]*$)/g, ',')); SpreadsheetApp.flush();
+    }
+    out.push(range.getA1Notation() + ' = ' + range.getDisplayValue());
+  }
+  f.forEach(function (x, i) { put(b.getRange(3 + i, 2), x); });
+  put(b.getRange('D3'), q);
+  Logger.log(out.join('\n'));
+}
