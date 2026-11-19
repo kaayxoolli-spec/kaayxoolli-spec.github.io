@@ -1,5 +1,5 @@
 /**
- * JÀPP – gestion automatique (SECOTRAMI)
+ * Bokk Yoon – gestion automatique (SECOTRAMI)
  * Base de données : ce Google Sheets. API : application web Apps Script.
  * 1) Exécuter setup() une fois.  2) Déployer > Nouveau déploiement > Application web
  *    (Exécuter en tant que : moi ; Accès : tout le monde).
@@ -41,7 +41,7 @@ function setup() {
 
   var b = ss.getSheetByName(NAMES.bord) || ss.insertSheet(NAMES.bord, 0);
   b.clear();
-  b.getRange('A1').setValue('JÀPP – Tableau de bord').setFontSize(16).setFontWeight('bold');
+  b.getRange('A1').setValue('Bokk Yoon – Tableau de bord').setFontSize(16).setFontWeight('bold');
   var rows = [
     ['Conducteurs inscrits', '=MAX(0,COUNTA(Conducteurs!B2:B))'],
     ['Conducteurs vérifiés', '=COUNTIF(Conducteurs!K2:K,TRUE)'],
@@ -85,7 +85,7 @@ function append_(name, row, cols) {
 function nextId_(name, prefix) { return prefix + ('000' + (rows_(name).length + 1)).slice(-3); }
 function alert_(subject, body) {
   var to = setting_(4);
-  if (to) { try { MailApp.sendEmail(to, 'JÀPP – ' + subject, body); } catch (e) {} }
+  if (to) { try { MailApp.sendEmail(to, 'Bokk Yoon – ' + subject, body); } catch (e) {} }
 }
 function dayKey_(d) { return Utilities.formatDate(d, 'Africa/Dakar', 'yyyy-MM-dd'); }
 

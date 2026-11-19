@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bokk Yoon Covoiturage</title>
+<meta name="description" content="Bokk Yoon, un service SECOTRAMI : covoiturage vérifié partout au Sénégal. Réserve une place dans une voiture qui fait déjà le trajet, ou propose tes places vides.">
+<link rel="canonical" href="https://kaayxoolli-spec.github.io/bokkyoon.html">
+<meta property="og:title" content="Bokk Yoon Covoiturage">
+<meta property="og:description" content="Covoiturage partout au Sénégal, avec des conducteurs vérifiés.">
+<meta property="og:image" content="https://kaayxoolli-spec.github.io/assets/bokkyoon/icon.png">
+<meta name="theme-color" content="#0E2A47">
+<link rel="manifest" href="/assets/bokkyoon/manifest.webmanifest">
+<link rel="icon" href="assets/bokkyoon/icon.png">
+<link rel="apple-touch-icon" href="assets/bokkyoon/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;500;600&display=swap">
+<script data-goatcounter="https://kaayxool.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+/* Layout: app shell, a road-sign header, a tab bar, one panel at a time */
+:root{
+  --ink:#0E2A47; --sign:#F5B700; --bg:#F3F5F8; --card:#FFFFFF; --text:#1B2330; --muted:#5B6576;
+  --line:#D9DEE6; --ok:#1E7B3A; --wa:#25D366;
+  --display:Montserrat,"Arial Black",system-ui,sans-serif; --body:Poppins,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{--bg:#0B1522;--card:#13202F;--text:#E8EDF4;--muted:#9AA6B8;--line:#26364A;--ok:#4CC072;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{background:var(--ink);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+header .wrap{padding-block:22px 18px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:.5px;line-height:1}
+.by{font-size:.78em;line-height:1.25;color:#D3DCE8;border-left:2px solid var(--sign);padding-left:12px}.by b{color:#fff;letter-spacing:.06em}
+.logo span{display:block;height:6px;background:var(--sign);border-radius:3px;margin-top:6px}
+.route{margin:16px 0 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:600}
+.stop{background:#fff;color:var(--ink);border-radius:8px;padding:6px 10px;font-size:.92em}
+.arrow{color:var(--sign);font-size:1.3em}
+.pitch{margin:12px 0 0;color:#D3DCE8;max-width:52ch}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto}
+nav button{font:inherit;font-weight:600;font-size:.9em;background:none;border:0;color:var(--muted);padding:14px 10px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+nav button[aria-selected=true]{color:var(--text);border-color:var(--sign)}
+nav button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--sign);outline-offset:2px}
+main{padding-block:20px 40px}
+h2{font-family:var(--display);font-size:1.35em;margin:0 0 6px;text-wrap:balance}
+.lead{color:var(--muted);margin:0 0 16px}
+.trips{display:grid;gap:12px}
+.trip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:8px}
+.trip-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.time{font-family:var(--display);font-weight:800;font-size:1.6em;font-variant-numeric:tabular-nums}
+.price{font-weight:700;font-variant-numeric:tabular-nums}
+.meta{color:var(--muted);font-size:.92em}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:.82em;font-weight:600;color:var(--ok)}
+.seats{font-weight:600}
+.btn{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 16px;cursor:pointer;width:100%;font-size:1em}
+.btn-wa{background:var(--wa);color:#06301a}
+.btn-ink{background:var(--ink);color:#fff}
+.empty{background:var(--card);border:2px dashed var(--line);border-radius:14px;padding:20px;text-align:left}
+.empty strong{display:block;font-size:1.05em;margin-bottom:4px}
+form{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:14px}
+label{display:grid;gap:6px;font-weight:600;font-size:.95em}
+input,select{font:inherit;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;width:100%;background:var(--bg);color:var(--text)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row > *{min-width:0}
+fieldset{border:0;padding:0;margin:0}
+legend{font-weight:600;font-size:.95em;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{display:flex;flex-direction:row;align-items:center;gap:6px;font-weight:500;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.chips input{width:auto;margin:0}
+.filtre{margin-bottom:14px}
+.ok{background:var(--bg);border:1.5px solid var(--ok);border-radius:12px;padding:14px;display:grid;gap:10px}
+.ok b{color:var(--ok)}
+.days{display:flex;flex-wrap:wrap;gap:6px}
+.days button{font:inherit;font-size:.86em;border:1.5px solid var(--line);background:var(--bg);color:var(--text);border-radius:999px;padding:6px 11px;cursor:pointer}
+.days button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.days button:disabled{opacity:.45;cursor:not-allowed;text-decoration:line-through}
+.resa{display:grid;gap:10px;border-top:1px dashed var(--line);padding-top:10px}
+.err{color:#C62828;font-weight:600;margin:0;min-height:1.2em}
+.note{color:var(--muted);font-size:.86em;margin:0}
+.rules{display:grid;gap:10px;padding:0;margin:0;list-style:none}
+.rules li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.rules b{display:block}
+.steps{counter-reset:s;display:grid;gap:10px;padding:0;margin:0 0 18px;list-style:none}
+.steps li{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start}
+.steps li::before{content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--sign);color:var(--ink);font-weight:800;font-family:var(--display)}
+.install{margin-top:18px}
+footer{color:var(--muted);font-size:.86em;padding-block:0 30px}
+@media (max-width:420px){.row{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.trip{transition:transform .15s}.trip:hover{transform:translateY(-1px)}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><div class="logo">BOKK YOON<span></span></div><div class="by">un service<br><b>SECOTRAMI</b></div></div>
+    <div class="route"><span class="stop">En ville</span><span class="arrow">·</span><span class="stop">Entre les régions</span><span class="arrow">·</span><span class="stop">Partout au Sénégal</span></div>
+    <p class="pitch"><b style="color:var(--sign)">Bokk yoon</b> : partager la route. Chaque jour, des voitures roulent avec des places vides : pour aller au travail, en ville ou dans une autre région. Réserve une place chez un conducteur vérifié et partagez les frais.</p>
+  </div>
+</header>
+<nav aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button role="tab" id="t-trajets" aria-selected="true" aria-controls="p-trajets">Trajets</button>
+    <button role="tab" id="t-place" aria-selected="false" aria-controls="p-place">Passager</button>
+    <button role="tab" id="t-conduis" aria-selected="false" aria-controls="p-conduis">Conducteur</button>
+    <button role="tab" id="t-securite" aria-selected="false" aria-controls="p-securite">Sécurité</button>
+  </div>
+</nav>
+<main class="wrap">
+
+<section id="p-trajets" role="tabpanel" aria-labelledby="t-trajets">
+  <h2>Trajets des 7 prochains jours</h2>
+  <p class="lead">Chaque conducteur a été vérifié par Bokk Yoon (pièce d'identité, carte grise, plaque).</p>
+  <div class="row filtre">
+    <label for="fd">Je pars de<input id="fd" list="lieux" placeholder="Ex. Keur Massar" autocomplete="off"></label>
+    <label for="fa">Je vais à<input id="fa" list="lieux" placeholder="Ex. Dakar Plateau" autocomplete="off"></label>
+  </div>
+  <div id="trips" class="trips">
+    <div class="empty"><strong>Chargement des trajets…</strong></div>
+  </div>
+  <ol class="steps" style="margin-top:22px">
+    <li><div><b>Choisis un trajet</b><br><span class="meta">Heure de départ, point de rendez-vous, prix par place.</span></div></li>
+    <li><div><b>Réserve ta place</b><br><span class="meta">Choisis le jour et donne ton numéro d'inscrit. Bokk Yoon t'envoie ensuite la voiture et la plaque du conducteur.</span></div></li>
+    <li><div><b>Paie le conducteur</b><br><span class="meta">Par Wave ou Orange Money, à la montée.</span></div></li>
+  </ol>
+</section>
+
+<section id="p-place" role="tabpanel" aria-labelledby="t-place" hidden>
+  <h2>Je cherche une place</h2>
+  <p class="lead">Dis-nous quand tu pars : on te propose un conducteur vérifié sur ton trajet.</p>
+  <form id="f-place" novalidate>
+    <label for="pn">Prénom et nom<input id="pn" name="nom" autocomplete="name" required></label>
+    <label for="pt">Téléphone WhatsApp<input id="pt" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="77 000 00 00" required></label>
+    <div class="row">
+      <label for="pd">Je pars de<input id="pd" name="depart" list="lieux" placeholder="Ville ou quartier" required></label>
+      <label for="pv">Je vais à<input id="pv" name="dest" list="lieux" placeholder="Ville ou quartier" required></label>
+    </div>
+    <div class="row">
+      <label for="ph">Heure de départ<select id="ph" name="heure"><option>tôt le matin (5h – 7h)</option><option selected>le matin (7h – 10h)</option><option>en journée (10h – 16h)</option><option>le soir (16h – 20h)</option><option>la nuit (après 20h)</option><option>peu importe</option></select></label>
+      <label for="pr">Retour<select id="pr" name="retour"><option>aller simple</option><option>aller et retour le même jour</option><option>retour un autre jour</option></select></label>
+    </div>
+    <fieldset><legend>Quels jours ?</legend><div class="chips" id="pj">
+      <label><input type="checkbox" name="jour" value="lundi" checked> Lun</label>
+      <label><input type="checkbox" name="jour" value="mardi" checked> Mar</label>
+      <label><input type="checkbox" name="jour" value="mercredi" checked> Mer</label>
+      <label><input type="checkbox" name="jour" value="jeudi" checked> Jeu</label>
+      <label><input type="checkbox" name="jour" value="vendredi" checked> Ven</label>
+      <label><input type="checkbox" name="jour" value="samedi"> Sam</label>
+      <label><input type="checkbox" name="jour" value="dimanche"> Dim</label>
+    </div></fieldset>
+    <label for="pq">Point de départ précis (repère)<input id="pq" name="lieu" placeholder="Ex. rond-point, station, marché"></label>
+    <label for="pa">Point d'arrivée précis (repère)<input id="pa" name="arrivee" placeholder="Ex. gare routière, lieu de travail"></label>
+    <p class="err" id="e-place" role="alert"></p>
+    <input type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+    <button class="btn btn-wa" type="submit">✅ M'inscrire comme passager</button>
+    <div class="ok" id="o-place" hidden></div>
+    <p class="note">Avant ton premier trajet, Bokk Yoon te demande ta pièce d'identité et ta filiation sur WhatsApp. Le site garde seulement ton nom, ton numéro et ton trajet, pour organiser les réservations.</p>
+  </form>
+</section>
+
+<section id="p-conduis" role="tabpanel" aria-labelledby="t-conduis" hidden>
+  <h2>Je conduis : je propose mes places</h2>
+  <p class="lead">Tu fais déjà le trajet, en ville ou vers une autre région ? Prends 1 à 4 passagers vérifiés et partage tes frais d'essence et de péage.</p>
+  <form id="f-conduis" novalidate>
+    <label for="cn">Prénom et nom<input id="cn" name="nom" autocomplete="name" required></label>
+    <label for="ct">Téléphone WhatsApp<input id="ct" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="77 000 00 00" required></label>
+    <div class="row">
+      <label for="cv">Voiture (marque, couleur)<input id="cv" name="voiture" placeholder="Ex. Toyota grise" required></label>
+      <label for="cp">Places libres<select id="cp" name="places"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+    </div>
+    <div class="row">
+      <label for="cd">Je pars de<input id="cd" name="depart" list="lieux" placeholder="Ville ou quartier" required></label>
+      <label for="cv2">Je vais à<input id="cv2" name="dest" list="lieux" placeholder="Ville ou quartier" required></label>
+    </div>
+    <div class="row">
+      <label for="ch">Heure de départ (aller)<select id="ch" name="matin"><option>5h00</option><option>5h30</option><option>6h00</option><option selected>6h30</option><option>7h00</option><option>7h30</option><option>8h00</option><option>8h30</option><option>9h00</option><option>9h30</option><option>10h00</option><option>10h30</option><option>11h00</option><option>11h30</option><option>12h00</option><option>12h30</option><option>13h00</option><option>13h30</option><option>14h00</option><option>14h30</option><option>15h00</option><option>15h30</option><option>16h00</option><option>16h30</option><option>17h00</option><option>17h30</option><option>18h00</option><option>18h30</option><option>19h00</option><option>19h30</option><option>20h00</option><option>20h30</option><option>21h00</option><option>21h30</option><option>22h00</option><option>22h30</option></select></label>
+      <label for="cr">Heure du retour<select id="cr" name="soir"><option>pas de retour</option><option>5h00</option><option>5h30</option><option>6h00</option><option>6h30</option><option>7h00</option><option>7h30</option><option>8h00</option><option>8h30</option><option>9h00</option><option>9h30</option><option>10h00</option><option>10h30</option><option>11h00</option><option>11h30</option><option>12h00</option><option>12h30</option><option>13h00</option><option>13h30</option><option>14h00</option><option>14h30</option><option>15h00</option><option>15h30</option><option>16h00</option><option>16h30</option><option>17h00</option><option>17h30</option><option selected>18h00</option><option>18h30</option><option>19h00</option><option>19h30</option><option>20h00</option><option>20h30</option><option>21h00</option><option>21h30</option><option>22h00</option><option>22h30</option></select></label>
+    </div>
+    <fieldset><legend>Quels jours ?</legend><div class="chips"><label><input type="checkbox" name="cjour" value="lundi" checked> Lun</label><label><input type="checkbox" name="cjour" value="mardi" checked> Mar</label><label><input type="checkbox" name="cjour" value="mercredi" checked> Mer</label><label><input type="checkbox" name="cjour" value="jeudi" checked> Jeu</label><label><input type="checkbox" name="cjour" value="vendredi" checked> Ven</label><label><input type="checkbox" name="cjour" value="samedi"> Sam</label><label><input type="checkbox" name="cjour" value="dimanche"> Dim</label></div></fieldset>
+    <label for="cq">Par où tu passes (route, quartiers)<input id="cq" name="lieu" placeholder="Ex. autoroute à péage, Rufisque"></label>
+    <p class="err" id="e-conduis" role="alert"></p>
+    <input type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+    <button class="btn btn-ink" type="submit">🚗 M'inscrire comme conducteur</button>
+    <div class="ok" id="o-conduis" hidden></div>
+    <p class="note">Avant ton premier trajet, Bokk Yoon vérifie ta pièce d'identité, ton permis et ta carte grise, en face à face ou en photo sur WhatsApp. Rien n'est demandé sur ce site.</p>
+  </form>
+</section>
+
+<section id="p-securite" role="tabpanel" aria-labelledby="t-securite" hidden>
+  <h2>La sécurité d'abord</h2>
+  <p class="lead">Monter avec quelqu'un qu'on ne connaît pas, ça se prépare. Voici nos règles.</p>
+  <ul class="rules">
+    <li><b>✅ Conducteurs vérifiés</b>Pièce d'identité, permis et carte grise contrôlés par Bokk Yoon avant le premier trajet.</li>
+    <li><b>🪪 Passagers inscrits</b>Chaque passager donne sa pièce d'identité et sa filiation à Bokk Yoon avant son premier trajet. Chacun sait avec qui il voyage.</li>
+    <li><b>🚘 Tu connais la voiture avant de monter</b>On t'envoie le prénom du conducteur, la couleur, la marque et la plaque. Si ce n'est pas la même voiture, tu ne montes pas.</li>
+    <li><b>📍 Partage ton trajet</b>Envoie ta position en direct sur WhatsApp à un proche pendant le trajet.</li>
+    <li><b>⭐ Avis après chaque trajet</b>Passagers et conducteurs donnent leur avis. Un signalement grave et la personne quitte Bokk Yoon.</li>
+    <li><b>💵 Prix fixé à l'avance</b>Pas de discussion dans la voiture : le prix de la place est connu avant la réservation.</li>
+    <li><b>🆘 En cas de problème</b>Écris tout de suite à Bokk Yoon sur WhatsApp au <b style="display:inline">76 888 80 00</b>. En cas d'urgence, appelle la police au 17.</li>
+  </ul>
+  <div class="install">
+    <h2>Mets Bokk Yoon sur ton téléphone</h2>
+    <p class="lead">Dans Chrome, touche le menu ⋮ puis « Ajouter à l'écran d'accueil ». Bokk Yoon s'ouvre ensuite comme une application.</p>
+    <button class="btn btn-ink" id="b-install" type="button" hidden>📲 Installer Bokk Yoon</button>
+  </div>
+</section>
+
+</main>
+<datalist id="lieux"><option value="Dakar Plateau"><option value="Médina"><option value="Fann – Point E"><option value="Mermoz – Sacré-Cœur"><option value="Liberté"><option value="Grand Yoff"><option value="HLM"><option value="Parcelles Assainies"><option value="Ouakam"><option value="Ngor – Almadies"><option value="Yoff"><option value="Patte d'Oie"><option value="Pikine"><option value="Guédiawaye"><option value="Thiaroye"><option value="Keur Massar"><option value="Malika"><option value="Tivaouane Peulh – Cité Apix"><option value="Keur Mbaye Fall"><option value="Mbao"><option value="Rufisque"><option value="Bargny"><option value="Sangalkam"><option value="Bambilor – Lac Rose"><option value="Diamniadio"><option value="Sébikotane"><option value="AIBD (aéroport)"><option value="Thiès"><option value="Mbour"><option value="Saly"><option value="Somone"><option value="Popenguine"><option value="Joal-Fadiouth"><option value="Tivaouane"><option value="Mboro"><option value="Louga"><option value="Saint-Louis"><option value="Richard-Toll"><option value="Podor"><option value="Matam"><option value="Touba"><option value="Mbacké"><option value="Diourbel"><option value="Bambey"><option value="Kaolack"><option value="Fatick"><option value="Foundiougne"><option value="Kaffrine"><option value="Tambacounda"><option value="Kédougou"><option value="Kolda"><option value="Sédhiou"><option value="Ziguinchor"><option value="Cap Skirring"><option value="Bignona"></datalist>
+<footer class="wrap"><p>Bokk Yoon, un service SECOTRAMI · Covoiturage partout au Sénégal · Phase de test · WhatsApp 76 888 80 00 · <a href="/bokkyoon-confidentialite.html">Confidentialité</a></p></footer>
+
+<script>
+(function(){
+  var API='https://script.google.com/macros/s/AKfycbx53ikJxwArjEq8jQfGqz_WVsQX1j5r-p3PlnL62b9MBV9w3xXiP_0emDFA1cBZHNJO/exec';
+  var WA='221768888000';
+  function waLink(msg){return 'https://wa.me/'+WA+'?text='+encodeURIComponent(msg);}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function post(data){
+    return fetch(API,{method:'POST',body:JSON.stringify(data)}).then(function(r){return r.json();});
+  }
+
+  // Tabs
+  var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+  function show(id){
+    tabs.forEach(function(t){var on=t.id==='t-'+id;t.setAttribute('aria-selected',on);document.getElementById(t.getAttribute('aria-controls')).hidden=!on;});
+    try{history.replaceState(null,'','#'+id);}catch(e){}
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){show(t.id.slice(2));});});
+  var h=(location.hash||'').slice(1); if(['trajets','place','conduis','securite'].indexOf(h)>=0) show(h);
+
+  // Trips
+  var box=document.getElementById('trips'), trips=[];
+  function emptyState(msg){
+    box.innerHTML='<div class="empty"><strong>'+(msg||'Les premiers conducteurs sont en cours de vérification.')+'</strong>'
+      +'<span class="meta">Inscris-toi dans l\'onglet « Passager » : dès qu\'une voiture vérifiée fait ton trajet, elle apparaît ici et tu peux réserver.</span>'
+      +'<div style="margin-top:12px"><button class="btn btn-wa" type="button" id="b-go">M\'inscrire comme passager</button></div></div>';
+    document.getElementById('b-go').addEventListener('click',function(){show('place');});
+  }
+  function render(){
+    if(!trips.length){emptyState();return;}
+    var fd=norm(document.getElementById('fd').value), fa=norm(document.getElementById('fa').value);
+    var shown=trips.map(function(t,k){return [t,k];}).filter(function(x){return (!fd||norm(x[0].depart).indexOf(fd)>=0)&&(!fa||norm(x[0].arrivee).indexOf(fa)>=0);});
+    if(!shown.length){box.innerHTML='<div class="empty"><strong>Pas encore de voiture sur ce trajet.</strong><span class="meta">Inscris-toi dans l\'onglet « Passager » avec ce trajet : Bokk Yoon cherche un conducteur et te prévient.</span></div>';return;}
+    box.innerHTML=shown.map(function(x){var t=x[0],k=x[1];
+      var any=t.jours.some(function(d){return d.libres>0;});
+      return '<article class="trip" data-k="'+k+'">'
+        +'<div class="trip-top"><span class="time">'+esc(t.heure)+'</span><span class="price">'+Number(t.prix).toLocaleString('fr-FR')+' F / place</span></div>'
+        +'<div><b>'+esc(t.depart)+' → '+esc(t.arrivee)+'</b></div>'
+        +'<div class="meta">'+esc(t.voiture)+' · RDV : '+esc(t.rdv)+' · '+t.jours.length+' jour'+(t.jours.length>1?'s':'')+' cette semaine</div>'
+        +'<div class="trip-top"><span class="badge">✔ '+esc(t.conducteur)+' · vérifié</span><span class="seats">'+t.places+' place'+(t.places>1?'s':'')+'</span></div>'
+        +(any?'<button class="btn btn-wa" type="button" data-open="'+k+'">Réserver une place</button>':'<div class="seats">Complet cette semaine</div>')
+        +'<form class="resa" data-k="'+k+'" hidden novalidate>'
+        +'<div class="meta">Choisis le jour :</div><div class="days">'
+        +t.jours.map(function(d){return '<button type="button" data-day="'+esc(d.key)+'" aria-pressed="false"'+(d.libres?'':' disabled')+'>'+esc(d.label)+(d.libres?' · '+d.libres:'')+'</button>';}).join('')
+        +'</div><label>Ton numéro WhatsApp (celui de ton inscription)<input name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="77 000 00 00"></label>'
+        +'<p class="err" role="alert"></p><button class="btn btn-ink" type="submit">Confirmer ma réservation</button></form>'
+        +'</article>';
+    }).join('');
+  }
+  box.addEventListener('click',function(ev){
+    var o=ev.target.closest('[data-open]');
+    if(o){var f=box.querySelector('form.resa[data-k="'+o.dataset.open+'"]');f.hidden=!f.hidden;return;}
+    var d=ev.target.closest('[data-day]');
+    if(d&&!d.disabled){[].forEach.call(d.parentNode.children,function(b){b.setAttribute('aria-pressed',b===d);});}
+  });
+  box.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var f=ev.target, t=trips[+f.dataset.k], err=f.querySelector('.err'), btn=f.querySelector('button[type=submit]');
+    var day=f.querySelector('[data-day][aria-pressed=true]');
+    if(!day){err.textContent='Choisis un jour.';return;}
+    if(f.tel.value.replace(/\D/g,'').length<9){err.textContent='Écris ton numéro WhatsApp complet.';return;}
+    err.textContent='';btn.disabled=true;btn.textContent='Réservation en cours…';
+    post({type:'reservation',trajet:t.id,jour:day.dataset.day,tel:f.tel.value}).then(function(r){
+      if(r.ok){
+        f.outerHTML='<div class="ok"><b>✅ Place réservée, '+esc(r.passager)+' !</b><span>'+esc(r.jour)+' à '+esc(r.heure)+' avec '+esc(r.conducteur)+' · '+Number(r.prix).toLocaleString('fr-FR')+' F à payer au conducteur. Réf. '+esc(r.ref)+'</span>'
+          +'<span class="meta">Bokk Yoon t\'envoie la voiture et la plaque sur WhatsApp avant le départ.</span></div>';
+        load();return;
+      }
+      var M={inconnu:'Ce numéro n\'est pas inscrit. Inscris-toi d\'abord dans l\'onglet « Passager ».',
+        non_verifie:'Ton inscription n\'est pas encore vérifiée. Bokk Yoon te contacte sur WhatsApp pour ta pièce d\'identité et ta filiation.',
+        complet:'Plus de place ce jour-là. Choisis un autre jour.',deja:'Tu as déjà une place sur ce trajet ce jour-là.',
+        ferme:'Les réservations sont fermées pour le moment.'};
+      err.textContent=M[r.code]||'La réservation n\'a pas marché. Réessaie dans un instant.';
+      btn.disabled=false;btn.textContent='Confirmer ma réservation';
+    }).catch(function(){err.textContent='Pas de connexion. Vérifie ton internet et réessaie.';btn.disabled=false;btn.textContent='Confirmer ma réservation';});
+  });
+  function norm(v){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
+  ['fd','fa'].forEach(function(id){document.getElementById(id).addEventListener('input',render);});
+  function load(){
+    fetch(API,{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
+      trips=(d&&d.trajets)||[]; render();
+    }).catch(function(){emptyState('Impossible de charger les trajets pour le moment.');});
+  }
+  load();
+
+  function done(el,html){el.innerHTML=html;el.hidden=false;el.scrollIntoView({block:'nearest'});}
+
+  // Passenger form
+  document.getElementById('f-place').addEventListener('submit',function(ev){
+    ev.preventDefault(); var f=ev.target, err=document.getElementById('e-place'), btn=f.querySelector('button[type=submit]');
+    var jours=[].slice.call(f.querySelectorAll('input[name=jour]:checked')).map(function(c){return c.value;});
+    if(!f.nom.value.trim()||f.tel.value.replace(/\D/g,'').length<9){err.textContent='Écris ton nom et ton numéro WhatsApp complet.';return;}
+    if(!f.depart.value.trim()||!f.dest.value.trim()){err.textContent='Écris d\'où tu pars et où tu vas.';return;}
+    if(!jours.length){err.textContent='Choisis au moins un jour.';return;}
+    err.textContent='';btn.disabled=true;
+    var data={type:'passager',site:f.site.value,nom:f.nom.value,tel:f.tel.value,sens:f.depart.value.trim()+' → '+f.dest.value.trim()+' ('+f.retour.value+')',heure:f.heure.value,jours:jours.join(', '),lieu:f.lieu.value,arrivee:f.arrivee.value};
+    post(data).then(function(r){
+      btn.disabled=false;
+      if(!r.ok){err.textContent='Vérifie ton nom et ton numéro, puis réessaie.';return;}
+      done(document.getElementById('o-place'),'<b>✅ Inscription reçue (n° '+esc(r.id)+')</b><span>Dernière étape : envoie ta pièce d\'identité et ta filiation à Bokk Yoon sur WhatsApp. Dès que c\'est vérifié, tu peux réserver.</span>'
+        +'<a class="btn btn-wa" style="text-align:center;text-decoration:none" href="'+waLink('Bonjour Bokk Yoon (SECOTRAMI), je viens de m\'inscrire comme passager (n° '+r.id+'). Voici ma pièce d\'identité et ma filiation :')+'">💬 Envoyer mes pièces sur WhatsApp</a>');
+      f.reset();
+    }).catch(function(){btn.disabled=false;err.textContent='Pas de connexion. Vérifie ton internet et réessaie.';});
+  });
+
+  // Driver form
+  document.getElementById('f-conduis').addEventListener('submit',function(ev){
+    ev.preventDefault(); var f=ev.target, err=document.getElementById('e-conduis'), btn=f.querySelector('button[type=submit]');
+    var cj=[].slice.call(f.querySelectorAll('input[name=cjour]:checked')).map(function(c){return c.value;});
+    if(!f.nom.value.trim()||f.tel.value.replace(/\D/g,'').length<9||!f.voiture.value.trim()){err.textContent='Écris ton nom, ton numéro complet et ta voiture.';return;}
+    if(!f.depart.value.trim()||!f.dest.value.trim()){err.textContent='Écris d\'où tu pars et où tu vas.';return;}
+    if(!cj.length){err.textContent='Choisis au moins un jour.';return;}
+    err.textContent='';btn.disabled=true;
+    post({type:'conducteur',site:f.site.value,nom:f.nom.value,tel:f.tel.value,voiture:f.voiture.value,places:f.places.value,matin:f.matin.value,soir:f.soir.value,lieu:f.lieu.value,depart:f.depart.value,dest:f.dest.value,jours:cj.join(', ')}).then(function(r){
+      btn.disabled=false;
+      if(!r.ok){err.textContent='Vérifie les champs, puis réessaie.';return;}
+      done(document.getElementById('o-conduis'),'<b>✅ Inscription reçue (n° '+esc(r.id)+')</b><span>Dernière étape : envoie ta pièce d\'identité, ton permis et ta carte grise à Bokk Yoon sur WhatsApp. Dès que c\'est vérifié, tes trajets apparaissent dans l\'application.</span>'
+        +'<a class="btn btn-ink" style="text-align:center;text-decoration:none" href="'+waLink('Bonjour Bokk Yoon (SECOTRAMI), je viens de m\'inscrire comme conducteur (n° '+r.id+'). Voici ma pièce d\'identité, mon permis et ma carte grise :')+'">💬 Envoyer mes papiers sur WhatsApp</a>');
+      f.reset();
+    }).catch(function(){btn.disabled=false;err.textContent='Pas de connexion. Vérifie ton internet et réessaie.';});
+  });
+
+  // Mode application (hors connexion)
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('/bokkyoon-sw.js').catch(function(){});}
+
+  // Install prompt (Android Chrome)
+  var deferred=null, bi=document.getElementById('b-install');
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;bi.hidden=false;});
+  bi.addEventListener('click',function(){if(deferred){deferred.prompt();deferred=null;bi.hidden=true;}});
+})();
+</script>
+</body>
+</html>

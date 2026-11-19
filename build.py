@@ -777,7 +777,7 @@ def main():
     (OUT / "decouvrir.html").write_text(decouvrir_page(), encoding="utf-8")
     (OUT / "xamtabax.html").write_text(xamtabax_page(), encoding="utf-8")
     (OUT / "academy.html").write_text(academy_page(), encoding="utf-8")
-    for f in ("japp.html", "japp-sw.js", "japp-hors-ligne.html", "japp-confidentialite.html"):
+    for f in ("japp.html", "japp-hors-ligne.html", "japp-confidentialite.html", "bokkyoon.html", "bokkyoon-sw.js", "bokkyoon-hors-ligne.html", "bokkyoon-confidentialite.html"):
         shutil.copy(ROOT / "pages" / f, OUT / f)
     for a in rows:
         (OUT / "annonce" / f"{a['ref']}.html").write_text(annonce_page(a), encoding="utf-8")
@@ -792,8 +792,8 @@ def main():
             f"  <url><loc>{SITE_URL}/decouvrir.html</loc></url>",
             f"  <url><loc>{SITE_URL}/xamtabax.html</loc></url>",
             f"  <url><loc>{SITE_URL}/academy.html</loc></url>",
-            f"  <url><loc>{SITE_URL}/japp.html</loc></url>",
-            f"  <url><loc>{SITE_URL}/japp-confidentialite.html</loc></url>"] + [
+            f"  <url><loc>{SITE_URL}/bokkyoon.html</loc></url>",
+            f"  <url><loc>{SITE_URL}/bokkyoon-confidentialite.html</loc></url>"] + [
         f"  <url><loc>{SITE_URL}/objets-perdus/{slug(v)}.html</loc></url>" for v in villes] + [
         f"  <url><loc>{SITE_URL}/annonce/{e(a['ref'])}.html</loc></url>" for a in rows]
     (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'

@@ -1,0 +1,25 @@
+{
+  "id": "/bokkyoon.html",
+  "name": "Bokk Yoon Covoiturage",
+  "short_name": "Bokk Yoon",
+  "description": "Covoiturage vérifié partout au Sénégal. Un service SECOTRAMI.",
+  "start_url": "/bokkyoon.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0E2A47",
+  "theme_color": "#0E2A47",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["travel", "transportation"],
+  "icons": [
+    {"src": "/assets/bokkyoon/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/assets/bokkyoon/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "/assets/bokkyoon/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "screenshots": [
+    {"src": "/assets/bokkyoon/screen-1.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Trajets vérifiés"},
+    {"src": "/assets/bokkyoon/screen-2.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Inscription passager"},
+    {"src": "/assets/bokkyoon/screen-3.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Règles de sécurité"}
+  ]
+}
