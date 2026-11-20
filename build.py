@@ -553,12 +553,7 @@ XT_REFS = ["VDN Section 3 : 15 km, 3 autoponts (conducteur de travaux)",
            "15 ans de chantiers routes, VRD, hydraulique et bâtiment"]
 
 
-def xamtabax_page():
-    title = "XAMTABAX Ingénierie – bureau d'études, suivi et contrôle des travaux à Dakar"
-    desc = ("Études, suivi de chantier, assistance au maître d'ouvrage et suivi de chantier pour la diaspora. "
-            "Routes, hydraulique, bâtiment, électricité, télécoms, solaire. Dakar, Sénégal.")
-    wa = "https://wa.me/221768888000?text=" + "Bonjour%20XAMTABAX%2C%20j%27ai%20un%20projet%20de%20construction"
-    css = """<style>
+XT_CSS = """<style>
 .xt-hero{background:#14324F;color:#fff;padding:40px 0 34px}
 .xt-hero h1{font-family:Montserrat,sans-serif;font-size:clamp(34px,8vw,60px);margin:0;letter-spacing:1px}
 .xt-hero h1 span{color:#E9B949}
@@ -591,6 +586,14 @@ def xamtabax_page():
 .xt-social a{padding:11px 16px;border-radius:10px;font-weight:700;text-decoration:none;color:#fff}
 .xt-yt{background:#E62117}.xt-tt{background:#111}
 </style>"""
+
+
+def xamtabax_page():
+    title = "XAMTABAX Ingénierie – bureau d'études, suivi et contrôle des travaux à Dakar"
+    desc = ("Études, suivi de chantier, assistance au maître d'ouvrage et suivi de chantier pour la diaspora. "
+            "Routes, hydraulique, bâtiment, électricité, télécoms, solaire. Dakar, Sénégal.")
+    wa = "https://wa.me/221768888000?text=" + "Bonjour%20XAMTABAX%2C%20j%27ai%20un%20projet%20de%20construction"
+    css = XT_CSS
     def wa_for(msg):
         return "https://wa.me/221768888000?text=" + quote(msg)
     offres = [
@@ -633,6 +636,7 @@ def xamtabax_page():
       <a class="xt-mail" href="mailto:kaayxoolli@gmail.com?subject=Projet%20XAMTABAX">✉️ kaayxoolli@gmail.com</a>
       <a class="xt-pdf" href="{SITE_URL}/assets/xamtabax/XAMTABAX_Ingenierie_plaquette.pdf">📄 Télécharger la plaquette</a>
       <a class="xt-mail" href="{SITE_URL}/academy.html">🎓 Formations XAMXAM Academy</a>
+      <a class="xt-pdf" href="{SITE_URL}/xamtabax-afrique.html">🌍 Tu construis ailleurs en Afrique ?</a>
     </div>
   </div>
 </header>
@@ -655,6 +659,74 @@ def xamtabax_page():
   </div>
   <h2>La plaquette</h2>
   <img class="xt-img" src="{SITE_URL}/assets/xamtabax/plaquette.jpg" alt="Plaquette XAMTABAX Ingénierie" width="1240" height="1754" loading="lazy">
+</main>
+""" + FOOTER
+
+
+def xamtabax_afrique_page():
+    title = "XAMTABAX Afrique – ton ingénieur génie civil à distance"
+    desc = ("Contrôle de devis, devis estimatif sur plan et conseil en appel vidéo, à distance, pour la Côte d'Ivoire, "
+            "le Mali, le Burkina Faso, le Bénin, le Togo, le Niger, la Guinée-Bissau et le Sénégal. Paiement en franc CFA.")
+    css = XT_CSS + """<style>
+.af-pays{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;padding:0;list-style:none}
+.af-pays li{background:#fff;color:#14324F;border-radius:999px;padding:7px 13px;font-weight:600;font-size:.92em}
+.af-steps{counter-reset:s;list-style:none;padding:0;display:grid;gap:12px;margin:14px 0 30px}
+.af-steps li{counter-increment:s;display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start}
+.af-steps li::before{content:counter(s);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#E9B949;color:#14324F;font-weight:800;font-family:Montserrat,sans-serif}
+.af-box{background:#F3F7F4;border-left:6px solid #1E7B3A;border-radius:12px;padding:14px 18px;margin:0 0 24px}
+</style>"""
+    def wa_for(msg):
+        return "https://wa.me/221768888000?text=" + quote(msg)
+    offres = [
+        ("Contrôle de devis", "15 000 F", "CFA", False,
+         ["Envoie ton devis et ton plan", "Quantités recalculées (ciment, fer, béton, briques)", "Lignes gonflées signalées, réponse sous 24 à 48 h"],
+         "Bonjour XAMTABAX, je construis en Afrique (pays : ) et je veux faire contrôler mon devis (15 000 F)."),
+        ("Devis estimatif sur plan", "25 000 à 50 000 F", "CFA", True,
+         ["Quantités poste par poste (fondation, élévation, dalle…)", "Main-d'œuvre et matériaux aux prix de ta ville", "Rapport PDF clair, prix annoncé avant de commencer"],
+         "Bonjour XAMTABAX, je construis en Afrique (pays et ville : ) et je veux un devis estimatif à partir de mon plan."),
+        ("Conseil en appel vidéo", "10 000 F", "30 min", False,
+         ["Tes questions avant de construire ou d'acheter", "Plan, terrain, budget, choix de l'entreprise", "Sur WhatsApp, à l'heure qui t'arrange"],
+         "Bonjour XAMTABAX, je veux un appel conseil de 30 minutes (10 000 F)."),
+        ("Guide PDF pour construire", "5 000 F", "PDF", False,
+         ["15 pages de conseils pratiques", "Dosages, contrôles, pièges à éviter", "Envoyé directement sur WhatsApp"],
+         "Bonjour XAMTABAX, je veux le guide PDF pour construire (5 000 F)."),
+    ]
+    offres_html = "".join(
+        f'<article class="xt-offre{" top" if top else ""}"><h3>{e(t)}</h3>'
+        f'<div class="xt-prix">{e(p)} <small>{e(u)}</small></div>'
+        f'<ul>{"".join(f"<li>{e(x)}</li>" for x in pts)}</ul>'
+        f'<a href="{wa_for(m)}" rel="noopener">💬 Commander sur WhatsApp</a></article>'
+        for t, p, u, top, pts, m in offres)
+    pays = ["Sénégal", "Côte d'Ivoire", "Mali", "Burkina Faso", "Bénin", "Togo", "Niger", "Guinée-Bissau"]
+    wa = wa_for("Bonjour XAMTABAX, je construis en Afrique (pays : ) et j'ai une question.")
+    return head(title, desc, "/xamtabax-afrique.html", css) + f"""<header class="xt-hero">
+  <div class="wrap">
+    <p class="crumb"><a href="{SITE_URL}/xamtabax.html" style="color:#cfe3d6">← XAMTABAX Ingénierie</a></p>
+    <h1>XAM<span>TABAX</span> Afrique</h1>
+    <div class="sub">TON INGÉNIEUR, À DISTANCE</div>
+    <p>Tu construis en Côte d'Ivoire, au Mali, au Burkina, au Bénin, au Togo, au Niger ou en Guinée-Bissau ?
+    Envoie ton plan et ton devis sur WhatsApp : <strong>un ingénieur génie civil avec 15 ans d'expérience</strong> les vérifie depuis Dakar, avant que tu paies ton entrepreneur.</p>
+    <ul class="af-pays">{"".join(f"<li>{e(x)}</li>" for x in pays)}</ul>
+    <div class="xt-btns"><a class="xt-wa" href="{wa}" rel="noopener">💬 WhatsApp : +221 76 888 80 00</a></div>
+  </div>
+</header>
+<main class="wrap">
+  <h2>Nos services à distance</h2>
+  <div class="xt-offres">{offres_html}</div>
+  <h2>Comment ça marche</h2>
+  <ol class="af-steps">
+    <li><div><b>Envoie ton plan ou ton devis</b><br>Sur WhatsApp, en photo ou en PDF, avec ton pays et ta ville.</div></li>
+    <li><div><b>On t'annonce le prix et le délai</b><br>Avant de commencer, sans engagement.</div></li>
+    <li><div><b>Tu paies en franc CFA</b><br>Par Wave ou Orange Money, selon ton pays.</div></li>
+    <li><div><b>Tu reçois ton rapport</b><br>En PDF sur WhatsApp, en général sous 24 à 72 h.</div></li>
+  </ol>
+  <div class="af-box"><b>Les prix changent d'un pays à l'autre.</b> Les quantités (béton, ciment, fer, briques) se calculent de la même façon partout. Pour les prix des matériaux et de la main-d'œuvre, on utilise ceux de ta ville : tu nous les donnes, ou on les vérifie ensemble.</div>
+  <div class="af-box"><b>Suivi de chantier sur place :</b> pour le moment au Sénégal uniquement (75 000 F par mois). Pour un autre pays, écris-nous : nous te dirons ce qui est possible.</div>
+  <p>Tu es dans un autre pays d'Afrique ? Écris-nous quand même sur WhatsApp, nous verrons ensemble comment t'aider.</p>
+  <div class="xt-social">
+    <a class="xt-yt" href="https://www.youtube.com/@xamtabax" rel="noopener">▶ Chaîne YouTube</a>
+    <a class="xt-tt" href="https://www.tiktok.com/@kaay.xool8" rel="noopener">♪ TikTok</a>
+  </div>
 </main>
 """ + FOOTER
 
@@ -777,6 +849,7 @@ def main():
     (OUT / "decouvrir.html").write_text(decouvrir_page(), encoding="utf-8")
     (OUT / "xamtabax.html").write_text(xamtabax_page(), encoding="utf-8")
     (OUT / "academy.html").write_text(academy_page(), encoding="utf-8")
+    (OUT / "xamtabax-afrique.html").write_text(xamtabax_afrique_page(), encoding="utf-8")
     for f in ("japp.html", "japp-hors-ligne.html", "japp-confidentialite.html", "bokkyoon.html", "bokkyoon-sw.js", "bokkyoon-hors-ligne.html", "bokkyoon-confidentialite.html"):
         shutil.copy(ROOT / "pages" / f, OUT / f)
     for a in rows:
@@ -792,6 +865,7 @@ def main():
             f"  <url><loc>{SITE_URL}/decouvrir.html</loc></url>",
             f"  <url><loc>{SITE_URL}/xamtabax.html</loc></url>",
             f"  <url><loc>{SITE_URL}/academy.html</loc></url>",
+            f"  <url><loc>{SITE_URL}/xamtabax-afrique.html</loc></url>",
             f"  <url><loc>{SITE_URL}/bokkyoon.html</loc></url>",
             f"  <url><loc>{SITE_URL}/bokkyoon-confidentialite.html</loc></url>"] + [
         f"  <url><loc>{SITE_URL}/objets-perdus/{slug(v)}.html</loc></url>" for v in villes] + [
